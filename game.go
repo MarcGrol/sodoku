@@ -183,7 +183,7 @@ func solve(g *Game, resultChannel chan *Game) {
 	}
 
 	// unsolveable
-	fmt.Fprintf(os.Stderr, "%p: Abort puzzle after steps:%d\n", g, g.StepCount)
+	fmt.Fprintf(os.Stderr, "%p: Abort after steps:%d\n", g, g.StepCount)
 }
 
 func (g *Game) step() int {
@@ -199,7 +199,7 @@ func (g *Game) step() int {
 				mergedCandidates := g.findCandidates(x, y)
 				if len(mergedCandidates) == 0 {
 					// we have mad a wrong guess somwhere
-					fmt.Fprintf(os.Stderr, "%p: Cell %d-%d has zero candidates!!!\n", g, x+1, y+1)
+					fmt.Fprintf(os.Stderr, "%p: Cell %d-%d has zero candidates due to wrong guess\n", g, x+1, y+1)
 					return -1
 				} else if len(mergedCandidates) == 1 {
 					g.square.Set(x, y, mergedCandidates[0])
