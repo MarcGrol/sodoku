@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"log"
+	"os"
 	"sort"
 	"strconv"
 	"strings"
@@ -12,7 +12,9 @@ const square_size = 9
 const section_size = 3
 
 type Game struct {
-	square *Square
+	square     *Square
+	stepCount  int
+	guessCount int
 }
 
 func newGame() *Game {
@@ -24,6 +26,8 @@ func newGame() *Game {
 func (g Game) copy() *Game {
 	ng := Game{}
 	ng.square = g.square.Copy()
+	ng.stepCount = g.stepCount
+	ng.guessCount = g.guessCount
 	return &ng
 }
 
@@ -126,7 +130,7 @@ func contains(array []int, value int, selfIdx int) bool {
 	return false
 }
 
-func (g *Game) Solve(stepCount int) (int, error) {
+func (g *Game) Solve() (*Game, error) {
 	maxSteps := square_size * square_size
 
 	for i := 0; i < maxSteps; i++ {
@@ -135,46 +139,47 @@ func (g *Game) Solve(stepCount int) (int, error) {
 		if cellsSolvedInStep == 0 {
 			// we are stuck
 			var err error
-			stepCount, err = g.guessAndContinue(stepCount)
+			gameCopy, err := g.guessAndContinue()
 			if err == nil {
-				return stepCount, nil
+				return gameCopy, nil
 			}
 			g.dumpGameState("Blocked")
-			return stepCount, fmt.Errorf("Got stuck solving puzzle after steps:%d\n%s", stepCount, g)
+			return gameCopy, fmt.Errorf("Got stuck solving puzzle\n%s\n", gameCopy)
 		}
 
 		if g.countEmptyValues() == 0 {
 			// we are done
-			return stepCount, nil
+			return g, nil
 		}
 
-		log.Printf("Solved %d cells in step %d\n", cellsSolvedInStep, stepCount)
+		fmt.Fprintf(os.Stderr, "Solved %d cells in step %d\n", cellsSolvedInStep, g.stepCount)
 
-		stepCount++
+		g.stepCount++
 	}
 
 	// unsolveable
 	g.dumpGameState("Aborted")
-	return stepCount, fmt.Errorf("Abort puzzle after steps:%d", stepCount)
+	return g, fmt.Errorf("Abort puzzle after steps:%d\n", g.stepCount)
 }
 
-func (g *Game) guessAndContinue(stepCount int) (int, error) {
+func (g *Game) guessAndContinue() (*Game, error) {
 	var err error
 	orderedBestGuesses := g.findCellsWithLeastCandidates()
 
 	for _, guess := range orderedBestGuesses {
 		for _, cand := range guess.candidates {
-			log.Printf("Try %d-%d to %d and continue", guess.x, guess.y, cand)
+			fmt.Fprintf(os.Stderr, "Try %d-%d to %d and continue\n", guess.x, guess.y, cand)
+			g.guessCount++
 			cpy := g.copy()
 			cpy.square.Set(guess.x, guess.y, cand)
-			stepCount, err = cpy.Solve(stepCount)
+			cpy, err = cpy.Solve()
 			if err == nil {
-				return stepCount, nil
+				return cpy, nil
 			}
 		}
 	}
 
-	return stepCount, err
+	return g, err
 }
 
 func (g *Game) findCellsWithLeastCandidates() []cell {
@@ -220,29 +225,29 @@ func (g *Game) findCandidates(x int, y int) []int {
 
 func (g *Game) dumpGameState(reason string) {
 
-	log.Printf("Got stuck solving puzzle: %s\n", reason)
+	fmt.Fprintf(os.Stderr, "Got stuck solving puzzle: %s\n", reason)
 
 	for x := 0; x < g.square.Size; x++ {
 		if (x % 3) == 0 {
-			fmt.Printf("___________________________________________________________________________________________________________________\n")
+			fmt.Fprintf(os.Stderr, "___________________________________________________________________________________________________________________\n")
 		}
 		for y := 0; y < g.square.Size; y++ {
 			if (y % 3) == 0 {
-				fmt.Printf("| ")
+				fmt.Fprintf(os.Stderr, "| ")
 			}
 			if g.square.Has(x, y) {
-				fmt.Printf("%-12d", g.square.Get(x, y))
+				fmt.Fprintf(os.Stderr, "%-12d", g.square.Get(x, y))
 			} else {
 				mergedCandidates := g.findCandidates(x, y)
 				alternatives := fmt.Sprintf("%v", mergedCandidates)
-				fmt.Printf("%-12s", alternatives)
+				fmt.Fprintf(os.Stderr, "%-12s", alternatives)
 
 			}
 		}
-		fmt.Printf("|\n")
+		fmt.Fprintf(os.Stderr, "|\n")
 	}
-	fmt.Printf("___________________________________________________________________________________________________________________\n")
-	fmt.Printf("\n\n")
+	fmt.Fprintf(os.Stderr, "___________________________________________________________________________________________________________________\n")
+	fmt.Fprintf(os.Stderr, "\n\n")
 }
 
 func (g *Game) countEmptyValues() int {
