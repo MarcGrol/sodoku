@@ -6,6 +6,7 @@ import (
 	"sort"
 	"strconv"
 	"strings"
+	"time"
 )
 
 const square_size = 9
@@ -13,8 +14,8 @@ const section_size = 3
 
 type Game struct {
 	square     *Square
-	stepCount  int
-	guessCount int
+	StepCount  int
+	GuessCount int
 }
 
 func newGame() *Game {
@@ -26,8 +27,8 @@ func newGame() *Game {
 func (g Game) copy() *Game {
 	ng := Game{}
 	ng.square = g.square.Copy()
-	ng.stepCount = g.stepCount
-	ng.guessCount = g.guessCount
+	ng.StepCount = g.StepCount
+	ng.GuessCount = g.GuessCount
 	return &ng
 }
 
@@ -130,56 +131,99 @@ func contains(array []int, value int, selfIdx int) bool {
 	return false
 }
 
-func (g *Game) Solve() (*Game, error) {
+func Solve(g *Game, timeout int) ([]*Game, error) {
+	resultChannel := make(chan *Game)
+
+	go solve(g, resultChannel)
+
+	timer := time.After(time.Duration(timeout) * time.Second)
+
+	solutions := make([]*Game, 0, 10)
+Select_loop:
+	for {
+		select {
+		case solution := <-resultChannel:
+			solutions = append(solutions, solution)
+			if len(solutions) >= 1 {
+				break Select_loop
+			}
+		case <-timer:
+			fmt.Fprintf(os.Stderr, "Timeout %d expired\n", timeout)
+			break Select_loop
+		}
+	}
+	return solutions, nil
+}
+
+func solve(g *Game, resultChannel chan *Game) {
 	maxSteps := square_size * square_size
 
 	for i := 0; i < maxSteps; i++ {
 
 		cellsSolvedInStep := g.step()
+
+		if cellsSolvedInStep < 0 {
+			// wrong guess upstream, terminate go-routine
+			return
+		}
+
 		if cellsSolvedInStep == 0 {
-			// we are stuck
-			var err error
-			gameCopy, err := g.guessAndContinue()
-			if err == nil {
-				return gameCopy, nil
-			}
-			g.dumpGameState("Blocked")
-			return gameCopy, fmt.Errorf("Got stuck solving puzzle\n%s\n", gameCopy)
+			// stuck using deterministic approach: start guessing
+			guessAndContinue(g, resultChannel)
+			return
 		}
 
-		if g.countEmptyValues() == 0 {
-			// we are done
-			return g, nil
+		fmt.Fprintf(os.Stderr, "%p: Solved %d cells in step %d\n", g, cellsSolvedInStep, g.StepCount)
+
+		if g.countEmptyValues() == 0 && g.validate() == nil {
+			// we are done: report result back over solution-channel
+			resultChannel <- g
+			return
 		}
-
-		fmt.Fprintf(os.Stderr, "Solved %d cells in step %d\n", cellsSolvedInStep, g.stepCount)
-
-		g.stepCount++
 	}
 
 	// unsolveable
-	g.dumpGameState("Aborted")
-	return g, fmt.Errorf("Abort puzzle after steps:%d\n", g.stepCount)
+	fmt.Fprintf(os.Stderr, "%p: Abort puzzle after steps:%d\n", g, g.StepCount)
 }
 
-func (g *Game) guessAndContinue() (*Game, error) {
-	var err error
+func (g *Game) step() int {
+	defer func() {
+		g.StepCount++
+	}()
+
+	cellsSolved := 0
+
+	for x := 0; x < g.square.Size; x++ {
+		for y := 0; y < g.square.Size; y++ {
+			if !g.square.Has(x, y) {
+				mergedCandidates := g.findCandidates(x, y)
+				if len(mergedCandidates) == 0 {
+					// we have mad a wrong guess somwhere
+					fmt.Fprintf(os.Stderr, "%p: Cell %d-%d has zero candidates!!!\n", g, x+1, y+1)
+					return -1
+				} else if len(mergedCandidates) == 1 {
+					g.square.Set(x, y, mergedCandidates[0])
+					cellsSolved++
+				}
+			}
+		}
+	}
+
+	return cellsSolved
+}
+
+func guessAndContinue(g *Game, resultChannel chan *Game) {
 	orderedBestGuesses := g.findCellsWithLeastCandidates()
 
 	for _, guess := range orderedBestGuesses {
 		for _, cand := range guess.candidates {
-			fmt.Fprintf(os.Stderr, "Try %d-%d to %d and continue\n", guess.x, guess.y, cand)
-			g.guessCount++
+			fmt.Fprintf(os.Stderr, "%p: Try %d-%d to %d and continue\n", g, guess.x+1, guess.y+1, cand)
 			cpy := g.copy()
 			cpy.square.Set(guess.x, guess.y, cand)
-			cpy, err = cpy.Solve()
-			if err == nil {
-				return cpy, nil
-			}
+			g.GuessCount++
+			go solve(cpy, resultChannel)
 		}
 	}
-
-	return g, err
 }
 
 func (g *Game) findCellsWithLeastCandidates() []cell {
@@ -198,22 +242,6 @@ func (g *Game) findCellsWithLeastCandidates() []cell {
 	return cells
 }
 
-func (g *Game) step() int {
-	cellsSolved := 0
-	g.square.Iterate(func(x int, y int, z int) error {
-		if !g.square.Has(x, y) {
-			mergedCandidates := g.findCandidates(x, y)
-			if len(mergedCandidates) == 1 {
-				g.square.Set(x, y, mergedCandidates[0])
-				cellsSolved++
-			}
-		}
-		return nil
-	})
-
-	return cellsSolved
-}
-
 func (g *Game) findCandidates(x int, y int) []int {
 	mergedValues := mergeValues(
 		g.square.GetRowValues(x),
@@ -223,9 +251,7 @@ func (g *Game) findCandidates(x int, y int) []int {
 	return findCandidates(mergedValues)
 }
 
-func (g *Game) dumpGameState(reason string) {
-
-	fmt.Fprintf(os.Stderr, "Got stuck solving puzzle: %s\n", reason)
+func (g *Game) DumpGameState() {
 
 	for x := 0; x < g.square.Size; x++ {
 		if (x % 3) == 0 {

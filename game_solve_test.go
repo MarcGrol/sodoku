@@ -17,8 +17,10 @@ _ 1 2 _ 4 5 _ 7 8
 	if err != nil {
 		t.Errorf("Error loading game: %s", err)
 	}
-	_, err = game.Solve()
+	solutions, err := Solve(game, 10)
 	if err != nil {
 		t.Errorf("Error solving game: %s", err)
+	} else {
+		t.Logf("solutions:%v", solutions)
 	}
 }

@@ -1,0 +1,1312 @@
+___________________________________________________________________________________________________________________
+| 9           [1 3 4 6 8] [3 4 8]     | [1 3 4 7]   2           [1 4 7 8]   | [3 7 8]     [1 6 8]     5           |
+| [1 2 3 6]   [1 3 4 6 8] [2 3 4 8]   | 9           [1 3 8]     5           | [2 3 7 8]   [1 2 6 8]   [1 6 7 8]   |
+| [1 2 3 5]   [1 3 8]     7           | [1 3]       6           [1 8]       | 4           [1 2 8 9]   [1 8 9]     |
+___________________________________________________________________________________________________________________
+| [3 6]       5           [3 4 9]     | [1 2 3 4 6] [1 3 8]     [1 2 4 6 8 9]| [8 9]       7           [1 4 8 9]   |
+| 8           [3 4 9]     1           | [3 4 5]     7           [4 9]       | 6           [4 5 9]     2           |
+| [6 7]       2           [4 9]       | [1 4 5 6]   [1 5 8]     [1 4 6 8 9] | [5 8 9]     3           [1 4 8 9]   |
+___________________________________________________________________________________________________________________
+| [2 3 5 7]   [3 7 8 9]   6           | [2 5 7]     4           [2 7]       | 1           [2 5 8 9]   [7 8 9]     |
+| [1 2 5 7]   [1 7 9]     [2 5 9]     | 8           [1 5]       3           | [2 5 7 9]   [2 4 5 6 9] [4 6 7 9]   |
+| 4           [1 7 8]     [2 5 8]     | [1 2 5 6 7] 9           [1 2 6 7]   | [2 5 7 8]   [2 5 6 8]   3           |
+___________________________________________________________________________________________________________________
+
+
+Try 4-1 to 3 and continue
+___________________________________________________________________________________________________________________
+| 9           [1 3 4 6 8] [3 4 8]     | [1 3 4 7]   2           [1 4 7 8]   | [3 7 8]     [1 6 8]     5           |
+| [1 2 6]     [1 3 4 6 8] [2 3 4 8]   | 9           [1 3 8]     5           | [2 3 7 8]   [1 2 6 8]   [1 6 7 8]   |
+| [1 2 5]     [1 3 8]     7           | [1 3]       6           [1 8]       | 4           [1 2 8 9]   [1 8 9]     |
+___________________________________________________________________________________________________________________
+| 3           5           [4 9]       | [1 2 4 6]   [1 8]       [1 2 4 6 8 9]| [8 9]       7           [1 4 8 9]   |
+| 8           [4 9]       1           | [3 4 5]     7           [4 9]       | 6           [4 5 9]     2           |
+| [6 7]       2           [4 9]       | [1 4 5 6]   [1 5 8]     [1 4 6 8 9] | [5 8 9]     3           [1 4 8 9]   |
+___________________________________________________________________________________________________________________
+| [2 5 7]     [3 7 8 9]   6           | [2 5 7]     4           [2 7]       | 1           [2 5 8 9]   [7 8 9]     |
+| [1 2 5 7]   [1 7 9]     [2 5 9]     | 8           [1 5]       3           | [2 5 7 9]   [2 4 5 6 9] [4 6 7 9]   |
+| 4           [1 7 8]     [2 5 8]     | [1 2 5 6 7] 9           [1 2 6 7]   | [2 5 7 8]   [2 5 6 8]   3           |
+___________________________________________________________________________________________________________________
+
+
+Try 6-3 to 4 and continue
+Cell 5-2 has zero candidates
+Try 6-3 to 9 and continue
+Cell 5-2 has zero candidates
+Try 7-6 to 2 and continue
+___________________________________________________________________________________________________________________
+| 9           [1 3 4 6 8] [3 4 8]     | [1 3 4 7]   2           [1 4 7 8]   | [3 7 8]     [1 6 8]     5           |
+| [1 2 6]     [1 3 4 6 8] [2 3 4 8]   | 9           [1 3 8]     5           | [2 3 7 8]   [1 2 6 8]   [1 6 7 8]   |
+| [1 2 5]     [1 3 8]     7           | [1 3]       6           [1 8]       | 4           [1 2 8 9]   [1 8 9]     |
+___________________________________________________________________________________________________________________
+| 3           5           [4 9]       | [1 2 4 6]   [1 8]       [1 4 6 8 9] | [8 9]       7           [1 4 8 9]   |
+| 8           [4 9]       1           | [3 4 5]     7           [4 9]       | 6           [4 5 9]     2           |
+| [6 7]       2           [4 9]       | [1 4 5 6]   [1 5 8]     [1 4 6 8 9] | [5 8 9]     3           [1 4 8 9]   |
+___________________________________________________________________________________________________________________
+| [5 7]       [3 7 8 9]   6           | [5 7]       4           2           | 1           [5 8 9]     [7 8 9]     |
+| [1 2 5 7]   [1 7 9]     [2 5 9]     | 8           [1 5]       3           | [2 5 7 9]   [2 4 5 6 9] [4 6 7 9]   |
+| 4           [1 7 8]     [2 5 8]     | [1 5 6 7]   9           [1 6 7]     | [2 5 7 8]   [2 5 6 8]   3           |
+___________________________________________________________________________________________________________________
+
+
+Try 6-3 to 4 and continue
+Cell 5-2 has zero candidates
+Try 6-3 to 9 and continue
+Cell 5-2 has zero candidates
+Try 8-5 to 1 and continue
+Solved 4 cells in step 0
+Cell 6-3 has zero candidates
+Try 8-5 to 5 and continue
+Solved 1 cells in step 0
+Solved 1 cells in step 1
+___________________________________________________________________________________________________________________
+| 9           [1 3 4 6 8] [3 4 8]     | [1 3 4]     2           [1 4 7 8]   | [3 7 8]     [1 6 8]     5           |
+| [1 2 6]     [1 3 4 6 8] [2 3 4 8]   | 9           [1 3 8]     5           | [2 3 7 8]   [1 2 6 8]   [1 6 7 8]   |
+| [1 2]       [1 3 8]     7           | [1 3]       6           [1 8]       | 4           [1 2 8 9]   [1 8 9]     |
+___________________________________________________________________________________________________________________
+| 3           5           [4 9]       | [1 2 4 6]   [1 8]       [1 4 6 8 9] | [8 9]       7           [1 4 8 9]   |
+| 8           [4 9]       1           | [3 4 5]     7           [4 9]       | 6           [4 5 9]     2           |
+| [6 7]       2           [4 9]       | [1 4 5 6]   [1 8]       [1 4 6 8 9] | [5 8 9]     3           [1 4 8 9]   |
+___________________________________________________________________________________________________________________
+| 5           [3 8 9]     6           | 7           4           2           | 1           [8 9]       [8 9]       |
+| [1 2 7]     [1 7 9]     [2 9]       | 8           5           3           | [2 7 9]     [2 4 6 9]   [4 6 7 9]   |
+| 4           [1 7 8]     [2 8]       | [1 6]       9           [1 6]       | [2 5 7 8]   [2 5 6 8]   3           |
+___________________________________________________________________________________________________________________
+
+
+Try 6-5 to 1 and continue
+Solved 2 cells in step 2
+Cell 6-3 has zero candidates
+Try 6-5 to 8 and continue
+Solved 1 cells in step 2
+Solved 7 cells in step 3
+Cell 3-8 has zero candidates
+Try 7-8 to 8 and continue
+Solved 1 cells in step 2
+Solved 1 cells in step 3
+___________________________________________________________________________________________________________________
+| 9           [1 4 6 8]   [3 4 8]     | [1 3 4]     2           [1 4 7 8]   | [3 7 8]     [1 6]       5           |
+| [1 2 6]     [1 4 6 8]   [2 3 4 8]   | 9           [1 3 8]     5           | [2 3 7 8]   [1 2 6]     [1 6 7 8]   |
+| [1 2]       [1 8]       7           | [1 3]       6           [1 8]       | 4           [1 2 9]     [1 8]       |
+___________________________________________________________________________________________________________________
+| 3           5           [4 9]       | [1 2 4 6]   [1 8]       [1 4 6 8 9] | [8 9]       7           [1 4 8]     |
+| 8           [4 9]       1           | [3 4 5]     7           [4 9]       | 6           [4 5 9]     2           |
+| [6 7]       2           [4 9]       | [1 4 5 6]   [1 8]       [1 4 6 8 9] | [5 8 9]     3           [1 4 8]     |
+___________________________________________________________________________________________________________________
+| 5           3           6           | 7           4           2           | 1           8           9           |
+| [1 2 7]     [1 7 9]     [2 9]       | 8           5           3           | [2 7]       [2 4 6]     [4 6 7]     |
+| 4           [1 7 8]     [2 8]       | [1 6]       9           [1 6]       | [2 5 7]     [2 5 6]     3           |
+___________________________________________________________________________________________________________________
+
+
+Try 4-3 to 4 and continue
+Cell 6-3 has zero candidates
+Try 4-3 to 9 and continue
+Cell 6-3 has zero candidates
+Try 6-5 to 1 and continue
+Solved 2 cells in step 4
+Cell 3-9 has zero candidates
+Try 6-5 to 8 and continue
+Solved 1 cells in step 4
+Cell 3-9 has zero candidates
+Try 4-5 to 1 and continue
+Solved 1 cells in step 4
+Cell 3-9 has zero candidates
+Try 4-5 to 8 and continue
+Solved 2 cells in step 4
+Cell 3-9 has zero candidates
+Try 6-1 to 6 and continue
+___________________________________________________________________________________________________________________
+| 9           [1 4 6 8]   [3 4 8]     | [1 3 4]     2           [1 4 7 8]   | [3 7 8]     [1 6]       5           |
+| [1 2]       [1 4 6 8]   [2 3 4 8]   | 9           [1 3 8]     5           | [2 3 7 8]   [1 2 6]     [1 6 7 8]   |
+| [1 2]       [1 8]       7           | [1 3]       6           [1 8]       | 4           [1 2 9]     [1 8]       |
+___________________________________________________________________________________________________________________
+| 3           5           [4 9]       | [1 2 4 6]   [1 8]       [1 4 6 8 9] | [8 9]       7           [1 4 8]     |
+| 8           [4 9]       1           | [3 4 5]     7           [4 9]       | 6           [4 5 9]     2           |
+| 6           2           [4 9]       | [1 4 5]     [1 8]       [1 4 8 9]   | [5 8 9]     3           [1 4 8]     |
+___________________________________________________________________________________________________________________
+| 5           3           6           | 7           4           2           | 1           8           9           |
+| [1 2 7]     [1 7 9]     [2 9]       | 8           5           3           | [2 7]       [2 4 6]     [4 6 7]     |
+| 4           [1 7 8]     [2 8]       | [1 6]       9           [1 6]       | [2 5 7]     [2 5 6]     3           |
+___________________________________________________________________________________________________________________
+
+
+Try 4-3 to 4 and continue
+Cell 6-3 has zero candidates
+Try 4-3 to 9 and continue
+Cell 6-3 has zero candidates
+Try 6-5 to 1 and continue
+Solved 2 cells in step 4
+Cell 3-9 has zero candidates
+Try 6-5 to 8 and continue
+Solved 1 cells in step 4
+Cell 3-9 has zero candidates
+Try 4-5 to 1 and continue
+Solved 1 cells in step 4
+Cell 3-9 has zero candidates
+Try 4-5 to 8 and continue
+Solved 2 cells in step 4
+Cell 3-9 has zero candidates
+Try 6-3 to 4 and continue
+Cell 5-2 has zero candidates
+Try 6-3 to 9 and continue
+Cell 5-2 has zero candidates
+Try 4-7 to 8 and continue
+Solved 4 cells in step 4
+Cell 3-9 has zero candidates
+Try 4-7 to 9 and continue
+Cell 6-3 has zero candidates
+Try 9-4 to 1 and continue
+Solved 2 cells in step 4
+Cell 6-4 has zero candidates
+Try 9-4 to 6 and continue
+Solved 1 cells in step 4
+Solved 2 cells in step 5
+Cell 3-2 has zero candidates
+Try 5-2 to 4 and continue
+Cell 6-3 has zero candidates
+Try 5-2 to 9 and continue
+Cell 6-3 has zero candidates
+Try 9-3 to 2 and continue
+Solved 1 cells in step 4
+Cell 6-3 has zero candidates
+Try 9-3 to 8 and continue
+___________________________________________________________________________________________________________________
+| 9           [1 4 6 8]   [3 4]       | [1 3 4]     2           [1 4 7 8]   | [3 7 8]     [1 6]       5           |
+| [1 2]       [1 4 6 8]   [2 3 4]     | 9           [1 3 8]     5           | [2 3 7 8]   [1 2 6]     [1 6 7 8]   |
+| [1 2]       [1 8]       7           | [1 3]       6           [1 8]       | 4           [1 2 9]     [1 8]       |
+___________________________________________________________________________________________________________________
+| 3           5           [4 9]       | [1 2 4 6]   [1 8]       [1 4 6 8 9] | [8 9]       7           [1 4 8]     |
+| 8           [4 9]       1           | [3 4 5]     7           [4 9]       | 6           [4 5 9]     2           |
+| 6           2           [4 9]       | [1 4 5]     [1 8]       [1 4 8 9]   | [5 8 9]     3           [1 4 8]     |
+___________________________________________________________________________________________________________________
+| 5           3           6           | 7           4           2           | 1           8           9           |
+| [1 2 7]     [1 7 9]     [2 9]       | 8           5           3           | [2 7]       [2 4 6]     [4 6 7]     |
+| 4           [1 7]       8           | [1 6]       9           [1 6]       | [2 5 7]     [2 5 6]     3           |
+___________________________________________________________________________________________________________________
+
+
+Try 8-3 to 2 and continue
+Solved 1 cells in step 4
+Solved 3 cells in step 5
+Cell 3-1 has zero candidates
+Try 8-3 to 9 and continue
+Cell 6-3 has zero candidates
+Try 4-5 to 1 and continue
+Solved 1 cells in step 4
+Cell 3-9 has zero candidates
+Try 4-5 to 8 and continue
+Solved 2 cells in step 4
+Cell 3-9 has zero candidates
+Try 6-5 to 1 and continue
+Solved 2 cells in step 4
+Cell 3-9 has zero candidates
+Try 6-5 to 8 and continue
+Solved 1 cells in step 4
+Cell 3-9 has zero candidates
+Try 4-7 to 8 and continue
+Solved 4 cells in step 4
+Cell 3-9 has zero candidates
+Try 4-7 to 9 and continue
+Cell 6-3 has zero candidates
+Try 9-4 to 1 and continue
+Solved 3 cells in step 4
+Cell 6-4 has zero candidates
+Try 9-4 to 6 and continue
+Solved 1 cells in step 4
+Solved 3 cells in step 5
+Cell 3-2 has zero candidates
+Try 5-2 to 4 and continue
+Cell 6-3 has zero candidates
+Try 5-2 to 9 and continue
+Cell 6-3 has zero candidates
+Try 9-6 to 1 and continue
+Solved 4 cells in step 4
+Cell 3-2 has zero candidates
+Try 9-6 to 6 and continue
+Solved 1 cells in step 4
+Solved 2 cells in step 5
+Cell 6-4 has zero candidates
+Try 5-6 to 4 and continue
+Solved 3 cells in step 4
+Cell 3-6 has zero candidates
+Try 5-6 to 9 and continue
+Solved 6 cells in step 4
+Cell 4-3 has zero candidates
+Try 1-3 to 3 and continue
+___________________________________________________________________________________________________________________
+| 9           [1 4 6 8]   3           | [1 4]       2           [1 4 7 8]   | [7 8]       [1 6]       5           |
+| [1 2]       [1 4 6 8]   [2 4]       | 9           [1 3 8]     5           | [2 3 7 8]   [1 2 6]     [1 6 7 8]   |
+| [1 2]       [1 8]       7           | [1 3]       6           [1 8]       | 4           [1 2 9]     [1 8]       |
+___________________________________________________________________________________________________________________
+| 3           5           [4 9]       | [1 2 4 6]   [1 8]       [1 4 6 8 9] | [8 9]       7           [1 4 8]     |
+| 8           [4 9]       1           | [3 4 5]     7           [4 9]       | 6           [4 5 9]     2           |
+| 6           2           [4 9]       | [1 4 5]     [1 8]       [1 4 8 9]   | [5 8 9]     3           [1 4 8]     |
+___________________________________________________________________________________________________________________
+| 5           3           6           | 7           4           2           | 1           8           9           |
+| [1 2 7]     [1 7 9]     [2 9]       | 8           5           3           | [2 7]       [2 4 6]     [4 6 7]     |
+| 4           [1 7]       8           | [1 6]       9           [1 6]       | [2 5 7]     [2 5 6]     3           |
+___________________________________________________________________________________________________________________
+
+
+Try 4-7 to 8 and continue
+Solved 8 cells in step 4
+Cell 2-7 has zero candidates
+Try 4-7 to 9 and continue
+Cell 6-3 has zero candidates
+Try 1-7 to 7 and continue
+Solved 3 cells in step 4
+Cell 9-6 has zero candidates
+Try 1-7 to 8 and continue
+Solved 3 cells in step 4
+Cell 3-6 has zero candidates
+Try 5-2 to 4 and continue
+Cell 6-3 has zero candidates
+Try 5-2 to 9 and continue
+Cell 6-3 has zero candidates
+Try 1-8 to 1 and continue
+Solved 2 cells in step 4
+Cell 3-6 has zero candidates
+Try 1-8 to 6 and continue
+___________________________________________________________________________________________________________________
+| 9           [1 4 8]     3           | [1 4]       2           [1 4 7 8]   | [7 8]       6           5           |
+| [1 2]       [1 4 6 8]   [2 4]       | 9           [1 3 8]     5           | [2 3 7 8]   [1 2]       [1 7 8]     |
+| [1 2]       [1 8]       7           | [1 3]       6           [1 8]       | 4           [1 2 9]     [1 8]       |
+___________________________________________________________________________________________________________________
+| 3           5           [4 9]       | [1 2 4 6]   [1 8]       [1 4 6 8 9] | [8 9]       7           [1 4 8]     |
+| 8           [4 9]       1           | [3 4 5]     7           [4 9]       | 6           [4 5 9]     2           |
+| 6           2           [4 9]       | [1 4 5]     [1 8]       [1 4 8 9]   | [5 8 9]     3           [1 4 8]     |
+___________________________________________________________________________________________________________________
+| 5           3           6           | 7           4           2           | 1           8           9           |
+| [1 2 7]     [1 7 9]     [2 9]       | 8           5           3           | [2 7]       [2 4]       [4 6 7]     |
+| 4           [1 7]       8           | [1 6]       9           [1 6]       | [2 5 7]     [2 5]       3           |
+___________________________________________________________________________________________________________________
+
+
+Try 2-1 to 1 and continue
+Cell 3-9 has zero candidates
+Try 2-1 to 2 and continue
+Cell 3-6 has zero candidates
+Try 5-6 to 4 and continue
+Solved 4 cells in step 4
+Cell 3-6 has zero candidates
+Try 5-6 to 9 and continue
+Solved 9 cells in step 4
+Cell 1-7 has zero candidates
+Try 1-4 to 1 and continue
+Solved 5 cells in step 4
+Cell 2-5 has zero candidates
+Try 1-4 to 4 and continue
+___________________________________________________________________________________________________________________
+| 9           [1 8]       3           | 4           2           [1 7 8]     | [7 8]       6           5           |
+| [1 2]       [1 4 6 8]   [2 4]       | 9           [1 3 8]     5           | [2 3 7 8]   [1 2]       [1 7 8]     |
+| [1 2]       [1 8]       7           | [1 3]       6           [1 8]       | 4           [1 2 9]     [1 8]       |
+___________________________________________________________________________________________________________________
+| 3           5           [4 9]       | [1 2 6]     [1 8]       [1 4 6 8 9] | [8 9]       7           [1 4 8]     |
+| 8           [4 9]       1           | [3 5]       7           [4 9]       | 6           [4 5 9]     2           |
+| 6           2           [4 9]       | [1 5]       [1 8]       [1 4 8 9]   | [5 8 9]     3           [1 4 8]     |
+___________________________________________________________________________________________________________________
+| 5           3           6           | 7           4           2           | 1           8           9           |
+| [1 2 7]     [1 7 9]     [2 9]       | 8           5           3           | [2 7]       [2 4]       [4 6 7]     |
+| 4           [1 7]       8           | [1 6]       9           [1 6]       | [2 5 7]     [2 5]       3           |
+___________________________________________________________________________________________________________________
+
+
+Try 1-2 to 1 and continue
+Cell 3-1 has zero candidates
+Try 1-2 to 8 and continue
+Cell 3-9 has zero candidates
+Try 3-9 to 1 and continue
+Cell 3-6 has zero candidates
+Try 3-9 to 8 and continue
+Cell 3-6 has zero candidates
+Try 4-3 to 4 and continue
+Cell 3-6 has zero candidates
+Try 4-3 to 9 and continue
+Cell 6-3 has zero candidates
+Try 4-5 to 1 and continue
+Solved 3 cells in step 4
+Cell 3-9 has zero candidates
+Try 4-5 to 8 and continue
+Solved 2 cells in step 4
+Cell 3-9 has zero candidates
+Try 4-7 to 8 and continue
+Cell 9-8 has zero candidates
+Try 4-7 to 9 and continue
+Cell 6-3 has zero candidates
+Try 6-3 to 4 and continue
+Cell 3-6 has zero candidates
+Try 6-3 to 9 and continue
+Cell 5-2 has zero candidates
+Try 5-2 to 4 and continue
+Cell 6-3 has zero candidates
+Try 5-2 to 9 and continue
+Cell 6-3 has zero candidates
+Try 5-4 to 3 and continue
+Cell 3-9 has zero candidates
+Try 5-4 to 5 and continue
+Solved 5 cells in step 4
+Cell 4-5 has zero candidates
+Try 5-6 to 4 and continue
+Solved 4 cells in step 4
+Cell 3-6 has zero candidates
+Try 5-6 to 9 and continue
+Solved 9 cells in step 4
+Cell 1-7 has zero candidates
+Try 6-4 to 1 and continue
+Cell 6-5 has zero candidates
+Try 6-4 to 5 and continue
+Solved 1 cells in step 4
+Cell 3-9 has zero candidates
+Try 6-5 to 1 and continue
+Solved 5 cells in step 4
+Cell 3-9 has zero candidates
+Try 6-5 to 8 and continue
+Solved 3 cells in step 4
+Cell 3-9 has zero candidates
+Try 8-3 to 2 and continue
+Cell 6-3 has zero candidates
+Try 8-3 to 9 and continue
+Cell 6-3 has zero candidates
+Try 8-7 to 2 and continue
+Solved 3 cells in step 4
+Cell 5-8 has zero candidates
+Try 8-7 to 7 and continue
+Solved 6 cells in step 4
+Cell 2-8 has zero candidates
+Try 8-8 to 2 and continue
+Cell 9-8 has zero candidates
+Try 8-8 to 4 and continue
+___________________________________________________________________________________________________________________
+| 9           [1 8]       3           | 4           2           [1 7 8]     | [7 8]       6           5           |
+| [1 2]       [1 4 6 8]   [2 4]       | 9           [1 3 8]     5           | [2 3 7 8]   [1 2]       [1 7 8]     |
+| [1 2]       [1 8]       7           | [1 3]       6           [1 8]       | 4           [1 2 9]     [1 8]       |
+___________________________________________________________________________________________________________________
+| 3           5           [4 9]       | [1 2 6]     [1 8]       [1 4 6 8 9] | [8 9]       7           [1 4 8]     |
+| 8           [4 9]       1           | [3 5]       7           [4 9]       | 6           [5 9]       2           |
+| 6           2           [4 9]       | [1 5]       [1 8]       [1 4 8 9]   | [5 8 9]     3           [1 4 8]     |
+___________________________________________________________________________________________________________________
+| 5           3           6           | 7           4           2           | 1           8           9           |
+| [1 2 7]     [1 7 9]     [2 9]       | 8           5           3           | [2 7]       4           [6 7]       |
+| 4           [1 7]       8           | [1 6]       9           [1 6]       | [2 5 7]     [2 5]       3           |
+___________________________________________________________________________________________________________________
+
+
+Try 1-2 to 1 and continue
+Cell 3-1 has zero candidates
+Try 1-2 to 8 and continue
+Cell 3-9 has zero candidates
+Try 4-7 to 8 and continue
+Cell 9-8 has zero candidates
+Try 4-7 to 9 and continue
+Cell 6-3 has zero candidates
+Try 6-3 to 4 and continue
+Cell 3-6 has zero candidates
+Try 6-3 to 9 and continue
+Cell 5-2 has zero candidates
+Try 5-2 to 4 and continue
+Cell 6-3 has zero candidates
+Try 5-2 to 9 and continue
+Cell 6-3 has zero candidates
+Try 5-4 to 3 and continue
+Cell 3-9 has zero candidates
+Try 5-4 to 5 and continue
+Solved 7 cells in step 4
+Cell 4-5 has zero candidates
+Try 5-6 to 4 and continue
+Solved 4 cells in step 4
+Cell 3-6 has zero candidates
+Try 5-6 to 9 and continue
+Solved 8 cells in step 4
+Cell 1-7 has zero candidates
+Try 5-8 to 5 and continue
+Solved 2 cells in step 4
+Cell 3-9 has zero candidates
+Try 5-8 to 9 and continue
+Cell 5-6 has zero candidates
+Try 6-4 to 1 and continue
+Cell 5-8 has zero candidates
+Try 6-4 to 5 and continue
+Solved 1 cells in step 4
+Cell 3-9 has zero candidates
+Try 6-5 to 1 and continue
+Solved 7 cells in step 4
+Cell 3-9 has zero candidates
+Try 6-5 to 8 and continue
+Solved 3 cells in step 4
+Cell 3-9 has zero candidates
+Try 8-3 to 2 and continue
+Cell 6-3 has zero candidates
+Try 8-3 to 9 and continue
+Cell 6-3 has zero candidates
+Try 8-7 to 2 and continue
+Solved 2 cells in step 4
+Cell 5-8 has zero candidates
+Try 8-7 to 7 and continue
+Cell 6-7 has zero candidates
+Try 8-9 to 6 and continue
+___________________________________________________________________________________________________________________
+| 9           [1 8]       3           | 4           2           [1 7 8]     | [7 8]       6           5           |
+| [1 2]       [1 4 6 8]   [2 4]       | 9           [1 3 8]     5           | [2 3 7 8]   [1 2]       [1 7 8]     |
+| [1 2]       [1 8]       7           | [1 3]       6           [1 8]       | 4           [1 2 9]     [1 8]       |
+___________________________________________________________________________________________________________________
+| 3           5           [4 9]       | [1 2 6]     [1 8]       [1 4 6 8 9] | [8 9]       7           [1 4 8]     |
+| 8           [4 9]       1           | [3 5]       7           [4 9]       | 6           [5 9]       2           |
+| 6           2           [4 9]       | [1 5]       [1 8]       [1 4 8 9]   | [5 8 9]     3           [1 4 8]     |
+___________________________________________________________________________________________________________________
+| 5           3           6           | 7           4           2           | 1           8           9           |
+| [1 2 7]     [1 7 9]     [2 9]       | 8           5           3           | [2 7]       4           6           |
+| 4           [1 7]       8           | [1 6]       9           [1 6]       | [2 5 7]     [2 5]       3           |
+___________________________________________________________________________________________________________________
+
+
+Try 1-2 to 1 and continue
+Cell 3-1 has zero candidates
+Try 1-2 to 8 and continue
+Cell 3-9 has zero candidates
+Try 4-5 to 1 and continue
+Solved 3 cells in step 4
+Cell 3-9 has zero candidates
+Try 4-5 to 8 and continue
+Solved 6 cells in step 4
+Cell 3-9 has zero candidates
+Try 4-7 to 8 and continue
+Cell 9-8 has zero candidates
+Try 4-7 to 9 and continue
+Cell 6-3 has zero candidates
+Try 5-2 to 4 and continue
+Cell 6-3 has zero candidates
+Try 5-2 to 9 and continue
+Cell 6-3 has zero candidates
+Try 5-4 to 3 and continue
+Cell 3-9 has zero candidates
+Try 5-4 to 5 and continue
+Solved 7 cells in step 4
+Cell 4-5 has zero candidates
+Try 5-6 to 4 and continue
+Solved 4 cells in step 4
+Cell 3-6 has zero candidates
+Try 5-6 to 9 and continue
+Solved 7 cells in step 4
+Cell 1-7 has zero candidates
+Try 5-8 to 5 and continue
+Solved 2 cells in step 4
+Cell 3-9 has zero candidates
+Try 5-8 to 9 and continue
+Cell 5-6 has zero candidates
+Try 6-3 to 4 and continue
+Cell 3-6 has zero candidates
+Try 6-3 to 9 and continue
+Cell 5-2 has zero candidates
+Try 6-4 to 1 and continue
+Cell 5-8 has zero candidates
+Try 6-4 to 5 and continue
+Solved 1 cells in step 4
+Cell 3-9 has zero candidates
+Try 6-5 to 1 and continue
+Solved 7 cells in step 4
+Cell 3-9 has zero candidates
+Try 6-5 to 8 and continue
+Solved 3 cells in step 4
+Cell 3-9 has zero candidates
+Try 8-3 to 2 and continue
+Cell 6-3 has zero candidates
+Try 8-3 to 9 and continue
+Cell 6-3 has zero candidates
+Try 8-7 to 2 and continue
+Solved 2 cells in step 4
+Cell 5-8 has zero candidates
+Try 8-7 to 7 and continue
+Cell 6-7 has zero candidates
+Try 9-2 to 1 and continue
+Cell 3-2 has zero candidates
+Try 9-2 to 7 and continue
+___________________________________________________________________________________________________________________
+| 9           [1 8]       3           | 4           2           [1 7 8]     | [7 8]       6           5           |
+| [1 2]       [1 4 6 8]   [2 4]       | 9           [1 3 8]     5           | [2 3 7 8]   [1 2]       [1 7 8]     |
+| [1 2]       [1 8]       7           | [1 3]       6           [1 8]       | 4           [1 2 9]     [1 8]       |
+___________________________________________________________________________________________________________________
+| 3           5           [4 9]       | [1 2 6]     [1 8]       [1 4 6 8 9] | [8 9]       7           [1 4 8]     |
+| 8           [4 9]       1           | [3 5]       7           [4 9]       | 6           [5 9]       2           |
+| 6           2           [4 9]       | [1 5]       [1 8]       [1 4 8 9]   | [5 8 9]     3           [1 4 8]     |
+___________________________________________________________________________________________________________________
+| 5           3           6           | 7           4           2           | 1           8           9           |
+| [1 2]       [1 9]       [2 9]       | 8           5           3           | [2 7]       4           6           |
+| 4           7           8           | [1 6]       9           [1 6]       | [2 5]       [2 5]       3           |
+___________________________________________________________________________________________________________________
+
+
+Try 1-2 to 1 and continue
+Cell 3-1 has zero candidates
+Try 1-2 to 8 and continue
+Cell 3-9 has zero candidates
+Try 5-8 to 5 and continue
+Solved 2 cells in step 4
+Cell 3-9 has zero candidates
+Try 5-8 to 9 and continue
+Cell 5-6 has zero candidates
+Try 6-3 to 4 and continue
+Cell 3-6 has zero candidates
+Try 6-3 to 9 and continue
+Cell 5-2 has zero candidates
+Try 6-4 to 1 and continue
+Cell 5-8 has zero candidates
+Try 6-4 to 5 and continue
+Solved 1 cells in step 4
+Cell 3-9 has zero candidates
+Try 6-5 to 1 and continue
+Solved 7 cells in step 4
+Cell 3-9 has zero candidates
+Try 6-5 to 8 and continue
+Solved 3 cells in step 4
+Cell 3-9 has zero candidates
+Try 8-1 to 1 and continue
+Cell 3-1 has zero candidates
+Try 8-1 to 2 and continue
+Cell 3-1 has zero candidates
+Try 8-2 to 1 and continue
+Cell 3-2 has zero candidates
+Try 8-2 to 9 and continue
+Solved 8 cells in step 4
+Cell 1-7 has zero candidates
+Try 8-3 to 2 and continue
+Cell 6-3 has zero candidates
+Try 8-3 to 9 and continue
+Cell 6-3 has zero candidates
+Try 8-7 to 2 and continue
+Cell 8-3 has zero candidates
+Try 8-7 to 7 and continue
+Cell 6-7 has zero candidates
+Try 9-4 to 1 and continue
+Cell 6-4 has zero candidates
+Try 9-4 to 6 and continue
+Solved 1 cells in step 4
+Solved 2 cells in step 5
+Cell 3-2 has zero candidates
+Try 9-6 to 1 and continue
+Solved 3 cells in step 4
+Cell 3-2 has zero candidates
+Try 9-6 to 6 and continue
+Solved 1 cells in step 4
+Cell 6-4 has zero candidates
+Try 9-7 to 2 and continue
+Solved 2 cells in step 4
+Cell 5-8 has zero candidates
+Try 9-7 to 5 and continue
+Solved 1 cells in step 4
+Solved 5 cells in step 5
+Cell 1-7 has zero candidates
+Try 9-8 to 2 and continue
+Solved 6 cells in step 4
+Cell 1-7 has zero candidates
+Try 9-8 to 5 and continue
+Solved 2 cells in step 4
+Cell 5-6 has zero candidates
+Try 1-7 to 7 and continue
+Cell 9-8 has zero candidates
+Try 1-7 to 8 and continue
+Cell 3-1 has zero candidates
+Try 2-1 to 1 and continue
+Cell 3-2 has zero candidates
+Try 2-1 to 2 and continue
+Cell 3-6 has zero candidates
+Try 2-3 to 2 and continue
+Cell 2-8 has zero candidates
+Try 2-3 to 4 and continue
+Cell 6-3 has zero candidates
+Try 2-8 to 1 and continue
+Cell 3-6 has zero candidates
+Try 2-8 to 2 and continue
+Cell 3-9 has zero candidates
+Try 3-1 to 1 and continue
+Cell 3-2 has zero candidates
+Try 3-1 to 2 and continue
+Cell 3-9 has zero candidates
+Try 3-2 to 1 and continue
+Cell 3-1 has zero candidates
+Try 3-2 to 8 and continue
+Cell 3-1 has zero candidates
+Try 3-4 to 1 and continue
+Cell 3-6 has zero candidates
+Try 3-4 to 3 and continue
+Solved 10 cells in step 4
+Cell 3-9 has zero candidates
+Try 3-6 to 1 and continue
+Cell 3-9 has zero candidates
+Try 3-6 to 8 and continue
+Cell 3-9 has zero candidates
+Try 3-9 to 1 and continue
+Cell 3-6 has zero candidates
+Try 3-9 to 8 and continue
+Cell 3-6 has zero candidates
+Try 4-3 to 4 and continue
+Cell 3-6 has zero candidates
+Try 4-3 to 9 and continue
+Cell 6-3 has zero candidates
+Try 4-5 to 1 and continue
+Solved 3 cells in step 4
+Cell 3-9 has zero candidates
+Try 4-5 to 8 and continue
+Solved 6 cells in step 4
+Cell 3-9 has zero candidates
+Try 4-7 to 8 and continue
+Cell 9-8 has zero candidates
+Try 4-7 to 9 and continue
+Cell 6-3 has zero candidates
+Try 5-2 to 4 and continue
+Cell 6-3 has zero candidates
+Try 5-2 to 9 and continue
+Cell 6-3 has zero candidates
+Try 5-4 to 3 and continue
+Cell 3-9 has zero candidates
+Try 5-4 to 5 and continue
+Solved 9 cells in step 4
+Cell 4-5 has zero candidates
+Try 5-6 to 4 and continue
+Solved 5 cells in step 4
+Cell 3-2 has zero candidates
+Try 5-6 to 9 and continue
+Solved 7 cells in step 4
+Cell 1-7 has zero candidates
+Try 2-9 to 1 and continue
+Cell 2-8 has zero candidates
+Try 2-9 to 7 and continue
+Cell 6-7 has zero candidates
+Try 2-9 to 8 and continue
+Cell 6-9 has zero candidates
+Try 4-4 to 1 and continue
+Cell 5-8 has zero candidates
+Try 4-4 to 2 and continue
+___________________________________________________________________________________________________________________
+| 9           [1 8]       3           | 4           2           [1 7 8]     | [7 8]       6           5           |
+| [1 2]       [1 4 6 8]   [2 4]       | 9           [1 3 8]     5           | [2 3 7 8]   [1 2]       [1 7 8]     |
+| [1 2]       [1 8]       7           | [1 3]       6           [1 8]       | 4           [1 2 9]     [1 8]       |
+___________________________________________________________________________________________________________________
+| 3           5           [4 9]       | 2           [1 8]       [1 4 6 8 9] | [8 9]       7           [1 4 8]     |
+| 8           [4 9]       1           | [3 5]       7           [4 9]       | 6           [5 9]       2           |
+| 6           2           [4 9]       | [1 5]       [1 8]       [1 4 8 9]   | [5 8 9]     3           [1 4 8]     |
+___________________________________________________________________________________________________________________
+| 5           3           6           | 7           4           2           | 1           8           9           |
+| [1 2]       [1 9]       [2 9]       | 8           5           3           | [2 7]       4           6           |
+| 4           7           8           | [1 6]       9           [1 6]       | [2 5]       [2 5]       3           |
+___________________________________________________________________________________________________________________
+
+
+Try 1-2 to 1 and continue
+Cell 3-1 has zero candidates
+Try 1-2 to 8 and continue
+Cell 3-9 has zero candidates
+Try 6-3 to 4 and continue
+Cell 3-6 has zero candidates
+Try 6-3 to 9 and continue
+Cell 5-2 has zero candidates
+Try 6-4 to 1 and continue
+Cell 5-8 has zero candidates
+Try 6-4 to 5 and continue
+Solved 1 cells in step 4
+Cell 3-9 has zero candidates
+Try 6-5 to 1 and continue
+Solved 7 cells in step 4
+Cell 3-9 has zero candidates
+Try 6-5 to 8 and continue
+Solved 3 cells in step 4
+Cell 3-9 has zero candidates
+Try 8-1 to 1 and continue
+Cell 3-1 has zero candidates
+Try 8-1 to 2 and continue
+Cell 3-1 has zero candidates
+Try 8-2 to 1 and continue
+Cell 3-2 has zero candidates
+Try 8-2 to 9 and continue
+Solved 8 cells in step 4
+Cell 1-7 has zero candidates
+Try 8-3 to 2 and continue
+Cell 6-3 has zero candidates
+Try 8-3 to 9 and continue
+Cell 6-3 has zero candidates
+Try 8-7 to 2 and continue
+Cell 8-3 has zero candidates
+Try 8-7 to 7 and continue
+Cell 6-7 has zero candidates
+Try 9-4 to 1 and continue
+Cell 6-4 has zero candidates
+Try 9-4 to 6 and continue
+Solved 1 cells in step 4
+Solved 2 cells in step 5
+Cell 3-2 has zero candidates
+Try 9-6 to 1 and continue
+Solved 3 cells in step 4
+Cell 3-2 has zero candidates
+Try 9-6 to 6 and continue
+Solved 1 cells in step 4
+Cell 6-4 has zero candidates
+Try 9-7 to 2 and continue
+Solved 2 cells in step 4
+Cell 5-8 has zero candidates
+Try 9-7 to 5 and continue
+Solved 1 cells in step 4
+Solved 5 cells in step 5
+Cell 1-7 has zero candidates
+Try 9-8 to 2 and continue
+Solved 6 cells in step 4
+Cell 1-7 has zero candidates
+Try 9-8 to 5 and continue
+Solved 2 cells in step 4
+Cell 5-6 has zero candidates
+Try 1-7 to 7 and continue
+Cell 9-8 has zero candidates
+Try 1-7 to 8 and continue
+Cell 3-1 has zero candidates
+Try 2-1 to 1 and continue
+Cell 3-2 has zero candidates
+Try 2-1 to 2 and continue
+Cell 3-6 has zero candidates
+Try 2-3 to 2 and continue
+Cell 2-8 has zero candidates
+Try 2-3 to 4 and continue
+Cell 6-3 has zero candidates
+Try 2-8 to 1 and continue
+Cell 3-6 has zero candidates
+Try 2-8 to 2 and continue
+Cell 3-9 has zero candidates
+Try 3-1 to 1 and continue
+Cell 3-2 has zero candidates
+Try 3-1 to 2 and continue
+Cell 3-9 has zero candidates
+Try 3-2 to 1 and continue
+Cell 3-1 has zero candidates
+Try 3-2 to 8 and continue
+Cell 3-1 has zero candidates
+Try 3-4 to 1 and continue
+Cell 3-6 has zero candidates
+Try 3-4 to 3 and continue
+Solved 10 cells in step 4
+Cell 3-9 has zero candidates
+Try 3-6 to 1 and continue
+Cell 3-9 has zero candidates
+Try 3-6 to 8 and continue
+Cell 3-9 has zero candidates
+Try 3-9 to 1 and continue
+Cell 3-6 has zero candidates
+Try 3-9 to 8 and continue
+Cell 3-6 has zero candidates
+Try 4-3 to 4 and continue
+Cell 3-6 has zero candidates
+Try 4-3 to 9 and continue
+Cell 6-3 has zero candidates
+Try 4-5 to 1 and continue
+Solved 3 cells in step 4
+Cell 3-9 has zero candidates
+Try 4-5 to 8 and continue
+Solved 6 cells in step 4
+Cell 3-9 has zero candidates
+Try 4-7 to 8 and continue
+Cell 9-8 has zero candidates
+Try 4-7 to 9 and continue
+Cell 6-3 has zero candidates
+Try 5-2 to 4 and continue
+Cell 6-3 has zero candidates
+Try 5-2 to 9 and continue
+Cell 6-3 has zero candidates
+Try 5-4 to 3 and continue
+Cell 3-9 has zero candidates
+Try 5-4 to 5 and continue
+Solved 9 cells in step 4
+Cell 4-5 has zero candidates
+Try 5-6 to 4 and continue
+Solved 5 cells in step 4
+Cell 3-2 has zero candidates
+Try 5-6 to 9 and continue
+Solved 7 cells in step 4
+Cell 1-7 has zero candidates
+Try 5-8 to 5 and continue
+Solved 2 cells in step 4
+Cell 3-9 has zero candidates
+Try 5-8 to 9 and continue
+Cell 5-6 has zero candidates
+Try 1-6 to 1 and continue
+Cell 3-9 has zero candidates
+Try 1-6 to 7 and continue
+Cell 6-7 has zero candidates
+Try 1-6 to 8 and continue
+Cell 3-1 has zero candidates
+Try 2-5 to 1 and continue
+Cell 2-8 has zero candidates
+Try 2-5 to 3 and continue
+Cell 3-9 has zero candidates
+Try 2-5 to 8 and continue
+Cell 6-5 has zero candidates
+Try 4-9 to 1 and continue
+Solved 8 cells in step 4
+Cell 2-9 has zero candidates
+Try 4-9 to 4 and continue
+Cell 6-3 has zero candidates
+Try 4-9 to 8 and continue
+Cell 6-7 has zero candidates
+Try 2-9 to 1 and continue
+Cell 2-8 has zero candidates
+Try 2-9 to 7 and continue
+Cell 6-7 has zero candidates
+Try 2-9 to 8 and continue
+Cell 6-9 has zero candidates
+Try 6-9 to 1 and continue
+Solved 5 cells in step 4
+Cell 2-9 has zero candidates
+Try 6-9 to 4 and continue
+Solved 3 cells in step 4
+Cell 4-3 has zero candidates
+Try 6-9 to 8 and continue
+Cell 6-7 has zero candidates
+Try 6-7 to 5 and continue
+Solved 8 cells in step 4
+Cell 4-5 has zero candidates
+Try 6-7 to 8 and continue
+Cell 9-8 has zero candidates
+Try 6-7 to 9 and continue
+Solved 5 cells in step 4
+Cell 3-6 has zero candidates
+Try 3-8 to 1 and continue
+Cell 3-6 has zero candidates
+Try 3-8 to 2 and continue
+Cell 3-6 has zero candidates
+Try 3-8 to 9 and continue
+Solved 2 cells in step 4
+Solved 5 cells in step 5
+Cell 1-7 has zero candidates
+Try 6-6 to 1 and continue
+Cell 6-5 has zero candidates
+Try 6-6 to 4 and continue
+Solved 8 cells in step 4
+Cell 1-7 has zero candidates
+Try 6-6 to 8 and continue
+Cell 6-5 has zero candidates
+Try 6-6 to 9 and continue
+Solved 2 cells in step 4
+Cell 3-6 has zero candidates
+Try 2-2 to 1 and continue
+Cell 2-8 has zero candidates
+Try 2-2 to 4 and continue
+Cell 3-6 has zero candidates
+Try 2-2 to 6 and continue
+___________________________________________________________________________________________________________________
+| 9           [1 8]       3           | 4           2           [1 7 8]     | [7 8]       6           5           |
+| [1 2]       6           [2 4]       | 9           [1 3 8]     5           | [2 3 7 8]   [1 2]       [1 7 8]     |
+| [1 2]       [1 8]       7           | [1 3]       6           [1 8]       | 4           [1 2 9]     [1 8]       |
+___________________________________________________________________________________________________________________
+| 3           5           [4 9]       | 2           [1 8]       [1 4 6 8 9] | [8 9]       7           [1 4 8]     |
+| 8           [4 9]       1           | [3 5]       7           [4 9]       | 6           [5 9]       2           |
+| 6           2           [4 9]       | [1 5]       [1 8]       [1 4 8 9]   | [5 8 9]     3           [1 4 8]     |
+___________________________________________________________________________________________________________________
+| 5           3           6           | 7           4           2           | 1           8           9           |
+| [1 2]       [1 9]       [2 9]       | 8           5           3           | [2 7]       4           6           |
+| 4           7           8           | [1 6]       9           [1 6]       | [2 5]       [2 5]       3           |
+___________________________________________________________________________________________________________________
+
+
+Try 9-8 to 2 and continue
+Solved 6 cells in step 4
+Cell 1-7 has zero candidates
+Try 9-8 to 5 and continue
+Solved 2 cells in step 4
+Cell 5-6 has zero candidates
+Try 6-3 to 4 and continue
+Cell 3-6 has zero candidates
+Try 6-3 to 9 and continue
+Cell 5-2 has zero candidates
+Try 6-4 to 1 and continue
+Cell 5-8 has zero candidates
+Try 6-4 to 5 and continue
+Solved 1 cells in step 4
+Cell 3-9 has zero candidates
+Try 6-5 to 1 and continue
+Solved 7 cells in step 4
+Cell 3-9 has zero candidates
+Try 6-5 to 8 and continue
+Solved 3 cells in step 4
+Cell 3-9 has zero candidates
+Try 8-1 to 1 and continue
+Cell 3-1 has zero candidates
+Try 8-1 to 2 and continue
+Cell 3-1 has zero candidates
+Try 8-2 to 1 and continue
+Cell 3-2 has zero candidates
+Try 8-2 to 9 and continue
+Solved 8 cells in step 4
+Cell 1-7 has zero candidates
+Try 8-3 to 2 and continue
+Cell 6-3 has zero candidates
+Try 8-3 to 9 and continue
+Cell 6-3 has zero candidates
+Try 8-7 to 2 and continue
+Cell 8-3 has zero candidates
+Try 8-7 to 7 and continue
+Cell 6-7 has zero candidates
+Try 9-4 to 1 and continue
+Cell 6-4 has zero candidates
+Try 9-4 to 6 and continue
+Solved 1 cells in step 4
+Solved 2 cells in step 5
+Cell 3-2 has zero candidates
+Try 9-6 to 1 and continue
+Solved 3 cells in step 4
+Cell 3-2 has zero candidates
+Try 9-6 to 6 and continue
+Solved 1 cells in step 4
+Cell 6-4 has zero candidates
+Try 9-7 to 2 and continue
+Solved 2 cells in step 4
+Cell 5-8 has zero candidates
+Try 9-7 to 5 and continue
+Solved 1 cells in step 4
+Solved 5 cells in step 5
+Cell 1-7 has zero candidates
+Try 1-7 to 7 and continue
+Cell 9-8 has zero candidates
+Try 1-7 to 8 and continue
+Cell 3-1 has zero candidates
+Try 2-1 to 1 and continue
+Cell 3-2 has zero candidates
+Try 2-1 to 2 and continue
+Cell 3-6 has zero candidates
+Try 2-3 to 2 and continue
+Cell 2-8 has zero candidates
+Try 2-3 to 4 and continue
+Cell 6-3 has zero candidates
+Try 2-8 to 1 and continue
+Cell 3-6 has zero candidates
+Try 2-8 to 2 and continue
+Cell 3-9 has zero candidates
+Try 3-1 to 1 and continue
+Cell 3-2 has zero candidates
+Try 3-1 to 2 and continue
+Cell 3-9 has zero candidates
+Try 3-2 to 1 and continue
+Cell 3-1 has zero candidates
+Try 3-2 to 8 and continue
+Cell 3-1 has zero candidates
+Try 3-4 to 1 and continue
+Cell 3-6 has zero candidates
+Try 3-4 to 3 and continue
+Solved 10 cells in step 4
+Cell 3-9 has zero candidates
+Try 3-6 to 1 and continue
+Cell 3-9 has zero candidates
+Try 3-6 to 8 and continue
+Cell 3-9 has zero candidates
+Try 3-9 to 1 and continue
+Cell 3-6 has zero candidates
+Try 3-9 to 8 and continue
+Cell 3-6 has zero candidates
+Try 4-3 to 4 and continue
+Cell 3-6 has zero candidates
+Try 4-3 to 9 and continue
+Cell 6-3 has zero candidates
+Try 4-5 to 1 and continue
+Solved 3 cells in step 4
+Cell 3-9 has zero candidates
+Try 4-5 to 8 and continue
+Solved 6 cells in step 4
+Cell 3-9 has zero candidates
+Try 4-7 to 8 and continue
+Cell 9-8 has zero candidates
+Try 4-7 to 9 and continue
+Cell 6-3 has zero candidates
+Try 1-2 to 1 and continue
+Cell 3-1 has zero candidates
+Try 1-2 to 8 and continue
+Cell 3-9 has zero candidates
+Try 5-2 to 4 and continue
+Cell 6-3 has zero candidates
+Try 5-2 to 9 and continue
+Cell 6-3 has zero candidates
+Try 5-4 to 3 and continue
+Cell 3-9 has zero candidates
+Try 5-4 to 5 and continue
+Solved 9 cells in step 4
+Cell 4-5 has zero candidates
+Try 5-6 to 4 and continue
+Solved 5 cells in step 4
+Cell 3-2 has zero candidates
+Try 5-6 to 9 and continue
+Solved 7 cells in step 4
+Cell 1-7 has zero candidates
+Try 5-8 to 5 and continue
+Solved 2 cells in step 4
+Cell 3-9 has zero candidates
+Try 5-8 to 9 and continue
+Cell 5-6 has zero candidates
+Try 6-9 to 1 and continue
+Solved 5 cells in step 4
+Cell 2-9 has zero candidates
+Try 6-9 to 4 and continue
+Solved 3 cells in step 4
+Cell 4-3 has zero candidates
+Try 6-9 to 8 and continue
+Cell 6-7 has zero candidates
+Try 1-6 to 1 and continue
+Cell 3-9 has zero candidates
+Try 1-6 to 7 and continue
+Cell 6-7 has zero candidates
+Try 1-6 to 8 and continue
+Cell 3-1 has zero candidates
+Try 2-9 to 1 and continue
+Cell 2-8 has zero candidates
+Try 2-9 to 7 and continue
+Cell 6-7 has zero candidates
+Try 2-9 to 8 and continue
+Cell 6-9 has zero candidates
+Try 6-7 to 5 and continue
+Solved 8 cells in step 4
+Cell 4-5 has zero candidates
+Try 6-7 to 8 and continue
+Cell 9-8 has zero candidates
+Try 6-7 to 9 and continue
+Solved 5 cells in step 4
+Cell 3-6 has zero candidates
+Try 4-9 to 1 and continue
+Solved 8 cells in step 4
+Cell 2-9 has zero candidates
+Try 4-9 to 4 and continue
+Cell 6-3 has zero candidates
+Try 4-9 to 8 and continue
+Cell 6-7 has zero candidates
+Try 3-8 to 1 and continue
+Cell 3-6 has zero candidates
+Try 3-8 to 2 and continue
+Cell 3-6 has zero candidates
+Try 3-8 to 9 and continue
+Solved 2 cells in step 4
+Solved 5 cells in step 5
+Cell 1-7 has zero candidates
+Try 2-5 to 1 and continue
+Cell 2-8 has zero candidates
+Try 2-5 to 3 and continue
+Cell 3-9 has zero candidates
+Try 2-5 to 8 and continue
+Cell 6-5 has zero candidates
+Try 6-6 to 1 and continue
+Cell 6-5 has zero candidates
+Try 6-6 to 4 and continue
+Solved 8 cells in step 4
+Cell 1-7 has zero candidates
+Try 6-6 to 8 and continue
+Cell 6-5 has zero candidates
+Try 6-6 to 9 and continue
+Solved 2 cells in step 4
+Cell 3-6 has zero candidates
+Try 2-7 to 2 and continue
+Cell 2-8 has zero candidates
+Try 2-7 to 3 and continue
+___________________________________________________________________________________________________________________
+| 9           [1 8]       3           | 4           2           [1 7 8]     | [7 8]       6           5           |
+| [1 2]       6           [2 4]       | 9           [1 8]       5           | 3           [1 2]       [1 7 8]     |
+| [1 2]       [1 8]       7           | [1 3]       6           [1 8]       | 4           [1 2 9]     [1 8]       |
+___________________________________________________________________________________________________________________
+| 3           5           [4 9]       | 2           [1 8]       [1 4 6 8 9] | [8 9]       7           [1 4 8]     |
+| 8           [4 9]       1           | [3 5]       7           [4 9]       | 6           [5 9]       2           |
+| 6           2           [4 9]       | [1 5]       [1 8]       [1 4 8 9]   | [5 8 9]     3           [1 4 8]     |
+___________________________________________________________________________________________________________________
+| 5           3           6           | 7           4           2           | 1           8           9           |
+| [1 2]       [1 9]       [2 9]       | 8           5           3           | [2 7]       4           6           |
+| 4           7           8           | [1 6]       9           [1 6]       | [2 5]       [2 5]       3           |
+___________________________________________________________________________________________________________________
+
+
+Try 9-8 to 2 and continue
+Solved 6 cells in step 4
+Cell 1-7 has zero candidates
+Try 9-8 to 5 and continue
+Solved 2 cells in step 4
+Cell 5-6 has zero candidates
+Try 6-5 to 1 and continue
+Cell 4-5 has zero candidates
+Try 6-5 to 8 and continue
+Cell 4-5 has zero candidates
+Try 8-1 to 1 and continue
+Cell 3-1 has zero candidates
+Try 8-1 to 2 and continue
+Cell 3-1 has zero candidates
+Try 8-2 to 1 and continue
+Cell 3-2 has zero candidates
+Try 8-2 to 9 and continue
+Solved 8 cells in step 4
+Cell 1-7 has zero candidates
+Try 8-3 to 2 and continue
+Cell 6-3 has zero candidates
+Try 8-3 to 9 and continue
+Cell 6-3 has zero candidates
+Try 8-7 to 2 and continue
+Cell 8-3 has zero candidates
+Try 8-7 to 7 and continue
+Cell 6-7 has zero candidates
+Try 9-4 to 1 and continue
+Cell 6-4 has zero candidates
+Try 9-4 to 6 and continue
+Solved 1 cells in step 4
+Solved 2 cells in step 5
+Cell 3-2 has zero candidates
+Try 9-6 to 1 and continue
+Solved 3 cells in step 4
+Cell 3-2 has zero candidates
+Try 9-6 to 6 and continue
+Solved 1 cells in step 4
+Cell 6-4 has zero candidates
+Try 9-7 to 2 and continue
+Solved 2 cells in step 4
+Cell 5-8 has zero candidates
+Try 9-7 to 5 and continue
+Solved 1 cells in step 4
+Solved 5 cells in step 5
+Cell 1-7 has zero candidates
+Try 1-7 to 7 and continue
+Cell 9-8 has zero candidates
+Try 1-7 to 8 and continue
+Cell 3-1 has zero candidates
+Try 2-1 to 1 and continue
+Cell 2-9 has zero candidates
+Try 2-1 to 2 and continue
+Cell 3-6 has zero candidates
+Try 2-3 to 2 and continue
+Cell 2-8 has zero candidates
+Try 2-3 to 4 and continue
+Cell 6-3 has zero candidates
+Try 2-5 to 1 and continue
+Cell 2-8 has zero candidates
+Try 2-5 to 8 and continue
+Cell 6-5 has zero candidates
+Try 2-8 to 1 and continue
+Cell 3-6 has zero candidates
+Try 2-8 to 2 and continue
+Cell 3-9 has zero candidates
+Try 3-1 to 1 and continue
+Cell 3-2 has zero candidates
+Try 3-1 to 2 and continue
+Cell 3-9 has zero candidates
+Try 3-2 to 1 and continue
+Cell 3-1 has zero candidates
+Try 3-2 to 8 and continue
+Cell 3-1 has zero candidates
+Try 3-4 to 1 and continue
+Cell 3-6 has zero candidates
+Try 3-4 to 3 and continue
+Solved 10 cells in step 4
+Cell 3-9 has zero candidates
+Try 3-6 to 1 and continue
+Cell 3-9 has zero candidates
+Try 3-6 to 8 and continue
+Cell 3-9 has zero candidates
+Try 3-9 to 1 and continue
+Cell 3-6 has zero candidates
+Try 3-9 to 8 and continue
+Cell 3-6 has zero candidates
+Try 4-3 to 4 and continue
+Cell 3-6 has zero candidates
+Try 4-3 to 9 and continue
+Cell 6-3 has zero candidates
+Try 4-5 to 1 and continue
+Cell 6-5 has zero candidates
+Try 4-5 to 8 and continue
+Cell 5-8 has zero candidates
+Try 4-7 to 8 and continue
+Cell 9-8 has zero candidates
+Try 4-7 to 9 and continue
+Cell 6-3 has zero candidates
+Try 1-2 to 1 and continue
+Cell 3-1 has zero candidates
+Try 1-2 to 8 and continue
+Cell 3-9 has zero candidates
+Try 5-2 to 4 and continue
+Cell 6-3 has zero candidates
+Try 5-2 to 9 and continue
+Cell 6-3 has zero candidates
+Try 5-4 to 3 and continue
+Cell 3-9 has zero candidates
+Try 5-4 to 5 and continue
+Solved 9 cells in step 4
+Cell 3-9 has zero candidates
+Try 5-6 to 4 and continue
+Solved 5 cells in step 4
+Cell 3-2 has zero candidates
+Try 5-6 to 9 and continue
+Solved 7 cells in step 4
+Cell 1-7 has zero candidates
+Try 5-8 to 5 and continue
+Solved 2 cells in step 4
+Cell 3-9 has zero candidates
+Try 5-8 to 9 and continue
+Cell 5-6 has zero candidates
+Try 6-3 to 4 and continue
+Cell 3-6 has zero candidates
+Try 6-3 to 9 and continue
+Cell 5-2 has zero candidates
+Try 6-4 to 1 and continue
+Cell 5-8 has zero candidates
+Try 6-4 to 5 and continue
+Solved 1 cells in step 4
+Cell 3-9 has zero candidates
+Try 1-6 to 1 and continue
+Cell 3-6 has zero candidates
+Try 1-6 to 7 and continue
+Cell 6-7 has zero candidates
+Try 1-6 to 8 and continue
+Cell 2-8 has zero candidates
+Try 6-9 to 1 and continue
+Solved 5 cells in step 4
+Cell 2-9 has zero candidates
+Try 6-9 to 4 and continue
+Solved 3 cells in step 4
+Cell 4-3 has zero candidates
+Try 6-9 to 8 and continue
+Cell 6-7 has zero candidates
+Try 2-9 to 1 and continue
+Cell 2-8 has zero candidates
+Try 2-9 to 7 and continue
+Cell 6-7 has zero candidates
+Try 2-9 to 8 and continue
+Cell 5-8 has zero candidates
+Try 6-7 to 5 and continue
+Solved 8 cells in step 4
+Cell 3-9 has zero candidates
+Try 6-7 to 8 and continue
+Cell 9-8 has zero candidates
+Try 6-7 to 9 and continue
+Solved 5 cells in step 4
+Cell 3-6 has zero candidates
+Try 4-9 to 1 and continue
+Solved 8 cells in step 4
+Cell 2-5 has zero candidates
+Try 4-9 to 4 and continue
+Cell 6-3 has zero candidates
+Try 4-9 to 8 and continue
+Cell 6-7 has zero candidates
+Try 3-8 to 1 and continue
+Cell 3-6 has zero candidates
+Try 3-8 to 2 and continue
+Cell 3-6 has zero candidates
+Try 3-8 to 9 and continue
+Solved 2 cells in step 4
+Solved 5 cells in step 5
+Cell 1-7 has zero candidates
+Try 6-6 to 1 and continue
+Cell 6-5 has zero candidates
+Try 6-6 to 4 and continue
+Solved 8 cells in step 4
+Cell 1-7 has zero candidates
+Try 6-6 to 8 and continue
+Cell 6-5 has zero candidates
+Try 6-6 to 9 and continue
+Solved 2 cells in step 4
+Cell 3-6 has zero candidates
+Try 4-6 to 1 and continue
+Cell 6-5 has zero candidates
+Try 4-6 to 4 and continue
+Cell 6-3 has zero candidates
+Try 4-6 to 6 and continue
+Solved 1 cells in step 4
+Solved 3 cells in step 5
+Cell 3-2 has zero candidates
+Try 4-6 to 8 and continue
+Cell 6-5 has zero candidates
+Try 4-6 to 9 and continue
+Cell 6-3 has zero candidates
+steps:4, guesses:440
