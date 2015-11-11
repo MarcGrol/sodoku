@@ -138,11 +138,11 @@ func contains(array []int, value int, selfIdx int) bool {
 }
 
 func Solve(g *Game, timeout int, minSolutionCount int) ([]*Game, error) {
-	// blocking to prevent go-routines to block on reporting solution
+	// non-blocking channel to prevent go-routines to block each other on reporting solution
 	solutionChannel := make(chan *Game, 1000)
 	duration := time.Duration(timeout) * time.Second
 
-	// package complrtion params within game
+	// package completion params within game
 	g.SolutionChannel = solutionChannel
 	g.DeadLine = time.Now().Add(duration)
 
@@ -166,14 +166,14 @@ outerLoop:
 				fmt.Fprintf(os.Stderr, "Solution is new:\n%s", newSolution)
 				solutions = append(solutions, newSolution)
 				if len(solutions) >= minSolutionCount {
-					fmt.Fprintf(os.Stdout, "Enough solutions received: %d\n", len(solutions))
+					fmt.Fprintf(os.Stderr, "Enough solutions received: %d\n", len(solutions))
 					break outerLoop
 				}
 			} else {
 				fmt.Fprintf(os.Stderr, "Solution exists")
 			}
 		case <-timer:
-			fmt.Fprintf(os.Stdout, "Timeout expired after %d secs\n", timeout)
+			fmt.Fprintf(os.Stdout, "Timeout expired after %d secs\n", duration)
 			break outerLoop
 		}
 	}
@@ -261,8 +261,8 @@ func guessAndContinue(g *Game) {
 	if len(orderedBestGuesses) > 0 {
 		bestGuess := orderedBestGuesses[0]
 		for _, cand := range bestGuess.candidates {
-			fmt.Fprintf(os.Stderr, "%p: Try %d-%d to %d and continue\n", g, bestGuess.x+1, bestGuess.y+1, cand)
 			cpy := g.copy()
+			fmt.Fprintf(os.Stderr, "%p: Try %d-%d with value %d and continue\n", cpy, bestGuess.x+1, bestGuess.y+1, cand)
 			cpy.square.Set(bestGuess.x, bestGuess.y, cand)
 			g.GuessCount++
 			go solve(cpy)
