@@ -173,7 +173,7 @@ outerLoop:
 				fmt.Fprintf(os.Stderr, "Solution exists")
 			}
 		case <-timer:
-			fmt.Fprintf(os.Stdout, "Timeout expired after %d secs\n", duration)
+			fmt.Fprintf(os.Stderr, "Timeout expired after %d secs\n", duration)
 			break outerLoop
 		}
 	}
@@ -197,6 +197,7 @@ func solutionExists(solutions []*Game, newSolution *Game) bool {
 func solve(g *Game) {
 	maxSteps := square_size * square_size
 
+	fmt.Fprintf(os.Stderr, "%p: Start solving\n", g)
 	for i := 0; i < maxSteps; i++ {
 
 		if time.Now().After(g.DeadLine) {
@@ -205,8 +206,6 @@ func solve(g *Game) {
 		}
 
 		cellsSolvedInStep := g.step()
-
-		fmt.Fprintf(os.Stderr, "%p: Solved %d cells this loop\n", g, cellsSolvedInStep)
 
 		if cellsSolvedInStep < 0 {
 			// wrong guess upstream, terminate go-routine
@@ -218,6 +217,7 @@ func solve(g *Game) {
 			guessAndContinue(g)
 			return
 		}
+		fmt.Fprintf(os.Stderr, "%p: Solved %d cells this loop\n", g, cellsSolvedInStep)
 
 		if g.countEmptyValues() == 0 && g.validate() == nil {
 			fmt.Fprintf(os.Stderr, "%p: Got solution\n", g)
@@ -262,7 +262,7 @@ func guessAndContinue(g *Game) {
 		bestGuess := orderedBestGuesses[0]
 		for _, cand := range bestGuess.candidates {
 			cpy := g.copy()
-			fmt.Fprintf(os.Stderr, "%p: Try %d-%d with value %d and continue\n", cpy, bestGuess.x+1, bestGuess.y+1, cand)
+			fmt.Fprintf(os.Stderr, "%p: Got stuck -> Try %d-%d with value %d and continue\n", cpy, bestGuess.x+1, bestGuess.y+1, cand)
 			cpy.square.Set(bestGuess.x, bestGuess.y, cand)
 			g.GuessCount++
 			go solve(cpy)
