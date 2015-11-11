@@ -7,7 +7,10 @@ import (
 	"os"
 )
 
-var timeout *int
+var (
+	timeout      *int
+	minSolutions *int
+)
 
 func main() {
 	processArgs()
@@ -24,16 +27,17 @@ func main() {
 		os.Exit(-2)
 	}
 
-	solutions, err := Solve(game, *timeout)
+	solutions, err := Solve(game, *timeout, *minSolutions)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error solving game: %s", err)
 		game.DumpGameState()
 		os.Exit(-3)
 	}
+
 	for _, solution := range solutions {
-		fmt.Fprintf(os.Stdout, "%s\n", solution)
-		fmt.Fprintf(os.Stdout, "steps:%d, guesses:%d\n\n",
-			solution.StepCount, solution.GuessCount)
+		fmt.Fprintf(os.Stderr, "%s\n", solution)
+		fmt.Fprintf(os.Stderr, "steps:%d, guesses:%d\n\n",
+			solution.CellsSolved, solution.GuessCount)
 	}
 
 	os.Exit(0)
@@ -49,11 +53,14 @@ func printUsage() {
 
 func processArgs() {
 	help := flag.Bool("help", false, "Usage information")
-	timeout = flag.Int("timeout", 60, "Timeout in secs before give up")
+	timeout = flag.Int("timeout", 10, "Timeout in secs before give up")
+	minSolutions = flag.Int("solutions", 1, "Nummber of solutions to wait for before give up")
 
 	flag.Parse()
 
 	if help != nil && *help == true {
 		printUsage()
 	}
+
+	fmt.Fprintf(os.Stderr, "Using timeout %d and minSolutions: %d\n", *timeout, *minSolutions)
 }

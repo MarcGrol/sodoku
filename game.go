@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"os"
+	"reflect"
 	"sort"
 	"strconv"
 	"strings"
@@ -13,9 +14,11 @@ const square_size = 9
 const section_size = 3
 
 type Game struct {
-	square     *Square
-	StepCount  int
-	GuessCount int
+	square          *Square
+	CellsSolved     int
+	GuessCount      int
+	SolutionChannel chan *Game
+	DeadLine        time.Time
 }
 
 func newGame() *Game {
@@ -27,8 +30,10 @@ func newGame() *Game {
 func (g Game) copy() *Game {
 	ng := Game{}
 	ng.square = g.square.Copy()
-	ng.StepCount = g.StepCount
+	ng.CellsSolved = g.CellsSolved
 	ng.GuessCount = g.GuessCount
+	ng.SolutionChannel = g.SolutionChannel
+	ng.DeadLine = g.DeadLine
 	return &ng
 }
 
@@ -46,7 +51,8 @@ func Load(lines string) (*Game, error) {
 
 		splitted := strings.Split(line, " ")
 		if len(splitted) != square_size {
-			return nil, fmt.Errorf("Invalid number of columns for row %d: needs %d, actual %d", x+1, square_size, len(splitted))
+			return nil, fmt.Errorf("Invalid number of columns for row %d: needs %d, actual %d", x+1,
+				square_size, len(splitted))
 		}
 		for y, val := range splitted {
 			if val == "_" {
@@ -131,36 +137,76 @@ func contains(array []int, value int, selfIdx int) bool {
 	return false
 }
 
-func Solve(g *Game, timeout int) ([]*Game, error) {
-	resultChannel := make(chan *Game)
+func Solve(g *Game, timeout int, minSolutionCount int) ([]*Game, error) {
+	// blocking to prevent go-routines to block on reporting solution
+	solutionChannel := make(chan *Game, 1000)
+	duration := time.Duration(timeout) * time.Second
 
-	go solve(g, resultChannel)
+	// package complrtion params within game
+	g.SolutionChannel = solutionChannel
+	g.DeadLine = time.Now().Add(duration)
 
-	timer := time.After(time.Duration(timeout) * time.Second)
+	// Start solving in background
+	// Solutions will be reported back over solutionChannel
+	go solve(g)
+
+	return waitforCompletion(solutionChannel, duration, minSolutionCount)
+
+}
+
+func waitforCompletion(solutionChannel chan *Game, duration time.Duration, minSolutionCount int) ([]*Game, error) {
+	timer := time.After(duration)
 
 	solutions := make([]*Game, 0, 10)
-Select_loop:
+outerLoop:
 	for {
 		select {
-		case solution := <-resultChannel:
-			solutions = append(solutions, solution)
-			if len(solutions) >= 1 {
-				break Select_loop
+		case newSolution := <-solutionChannel:
+			if !solutionExists(solutions, newSolution) {
+				fmt.Fprintf(os.Stderr, "Solution is new:\n%s", newSolution)
+				solutions = append(solutions, newSolution)
+				if len(solutions) >= minSolutionCount {
+					fmt.Fprintf(os.Stdout, "Enough solutions received: %d\n", len(solutions))
+					break outerLoop
+				}
+			} else {
+				fmt.Fprintf(os.Stderr, "Solution exists")
 			}
 		case <-timer:
-			fmt.Fprintf(os.Stderr, "Timeout %d expired\n", timeout)
-			break Select_loop
+			fmt.Fprintf(os.Stdout, "Timeout expired after %d secs\n", timeout)
+			break outerLoop
 		}
+	}
+
+	if len(solutions) == 0 {
+		return solutions, fmt.Errorf("No solutions found")
 	}
 	return solutions, nil
 }
 
-func solve(g *Game, resultChannel chan *Game) {
+func solutionExists(solutions []*Game, newSolution *Game) bool {
+	for _, s := range solutions {
+		if reflect.DeepEqual(s.square, newSolution.square) {
+			return true
+		}
+	}
+
+	return false
+}
+
+func solve(g *Game) {
 	maxSteps := square_size * square_size
 
 	for i := 0; i < maxSteps; i++ {
 
+		if time.Now().After(g.DeadLine) {
+			fmt.Fprintf(os.Stderr, "%p: Abort because deadline expired\n", g)
+			return
+		}
+
 		cellsSolvedInStep := g.step()
+
+		fmt.Fprintf(os.Stderr, "%p: Solved %d cells this loop\n", g, cellsSolvedInStep)
 
 		if cellsSolvedInStep < 0 {
 			// wrong guess upstream, terminate go-routine
@@ -169,28 +215,25 @@ func solve(g *Game, resultChannel chan *Game) {
 
 		if cellsSolvedInStep == 0 {
 			// stuck using deterministic approach: start guessing
-			guessAndContinue(g, resultChannel)
+			guessAndContinue(g)
 			return
 		}
-
-		fmt.Fprintf(os.Stderr, "%p: Solved %d cells in step %d\n", g, cellsSolvedInStep, g.StepCount)
 
 		if g.countEmptyValues() == 0 && g.validate() == nil {
+			fmt.Fprintf(os.Stderr, "%p: Got solution\n", g)
 			// we are done: report result back over solution-channel
-			resultChannel <- g
+			g.SolutionChannel <- g
 			return
 		}
+
+		g.CellsSolved += cellsSolvedInStep
 	}
 
 	// unsolveable
-	fmt.Fprintf(os.Stderr, "%p: Abort after steps:%d\n", g, g.StepCount)
+	fmt.Fprintf(os.Stderr, "%p: Abort after cells solved:%d\n", g, g.CellsSolved)
 }
 
 func (g *Game) step() int {
-	defer func() {
-		g.StepCount++
-	}()
-
 	cellsSolved := 0
 
 	for x := 0; x < g.square.Size; x++ {
@@ -199,7 +242,7 @@ func (g *Game) step() int {
 				mergedCandidates := g.findCandidates(x, y)
 				if len(mergedCandidates) == 0 {
 					// we have mad a wrong guess somwhere
-					fmt.Fprintf(os.Stderr, "%p: Cell %d-%d has zero candidates due to wrong guess\n", g, x+1, y+1)
+					fmt.Fprintf(os.Stderr, "%p: Cell %d-%d has zero candidates due to wrong guess upstream\n", g, x+1, y+1)
 					return -1
 				} else if len(mergedCandidates) == 1 {
 					g.square.Set(x, y, mergedCandidates[0])
@@ -212,16 +255,17 @@ func (g *Game) step() int {
 	return cellsSolved
 }
 
-func guessAndContinue(g *Game, resultChannel chan *Game) {
+func guessAndContinue(g *Game) {
 	orderedBestGuesses := g.findCellsWithLeastCandidates()
 
-	for _, guess := range orderedBestGuesses {
-		for _, cand := range guess.candidates {
-			fmt.Fprintf(os.Stderr, "%p: Try %d-%d to %d and continue\n", g, guess.x+1, guess.y+1, cand)
+	if len(orderedBestGuesses) > 0 {
+		bestGuess := orderedBestGuesses[0]
+		for _, cand := range bestGuess.candidates {
+			fmt.Fprintf(os.Stderr, "%p: Try %d-%d to %d and continue\n", g, bestGuess.x+1, bestGuess.y+1, cand)
 			cpy := g.copy()
-			cpy.square.Set(guess.x, guess.y, cand)
+			cpy.square.Set(bestGuess.x, bestGuess.y, cand)
 			g.GuessCount++
-			go solve(cpy, resultChannel)
+			go solve(cpy)
 		}
 	}
 }
