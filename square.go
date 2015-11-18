@@ -6,11 +6,11 @@ import (
 	"math"
 )
 
-const missing_value = 0
-const missing_symbol = "_"
+const MISSING_VALUE = 0
+const MISSING_SYMBOL = "_"
 
 type Square struct {
-	data        [][]int
+	data        [][]Value
 	Size        int
 	SectionSize int
 }
@@ -18,9 +18,9 @@ type Square struct {
 func NewSquare(size int) *Square {
 	sectionSize := math.Sqrt(float64(size))
 	sq := Square{Size: size, SectionSize: int(sectionSize)}
-	sq.data = make([][]int, size)
+	sq.data = make([][]Value, size)
 	for x := 0; x < size; x++ {
-		sq.data[x] = make([]int, size)
+		sq.data[x] = make([]Value, size)
 	}
 	return &sq
 }
@@ -36,7 +36,7 @@ func (sq Square) Copy() *Square {
 	return nsq
 }
 
-type IterFunc func(x int, y int, z int) error
+type IterFunc func(x int, y int, z Value) error
 
 func (sq *Square) Iterate(callback IterFunc) error {
 	for x := 0; x < sq.Size; x++ {
@@ -54,43 +54,51 @@ func (sq Square) Exists(x int, y int) bool {
 	return x >= 0 && x < sq.Size && y >= 0 && y < sq.Size
 }
 
-func (sq *Square) Set(x int, y int, value int) {
+func (sq *Square) Set(x int, y int, value Value) {
 	sq.data[x][y] = value
 }
 
 func (sq *Square) Clear(x int, y int) {
-	sq.data[x][y] = missing_value
+	sq.data[x][y] = MISSING_VALUE
 }
 
 func (sq Square) Has(x int, y int) bool {
-	return sq.data[x][y] != missing_value
+	return sq.data[x][y] != MISSING_VALUE
 }
 
-func (sq Square) Get(x int, y int) int {
+func (sq Square) Get(x int, y int) Value {
 	return sq.data[x][y]
 }
 
-func (sq Square) GetRowValues(x int) []int {
-	values := make([]int, 0, sq.Size)
+func (sq Square) IsAllowed(x int, y int, z Value) bool {
+	rowValues := sq.GetRowValues(x)
+	columnValues := sq.GetColumnValues(y)
+	sectionValues := sq.GetSectionValues(x, y)
+
+	return !rowValues.Contains(z) && !columnValues.Contains(z) && !sectionValues.Contains(z)
+}
+
+func (sq Square) GetRowValues(x int) ValueSet {
+	values := NewValueSet()
 	for y := 0; y < sq.Size; y++ {
-		if sq.data[x][y] != missing_value {
-			values = append(values, sq.data[x][y])
+		if sq.Has(x, y) {
+			values.Add(sq.data[x][y])
 		}
 	}
 	return values
 }
 
-func (sq Square) GetColumnValues(y int) []int {
-	values := make([]int, 0, sq.Size)
+func (sq Square) GetColumnValues(y int) ValueSet {
+	values := NewValueSet()
 	for x := 0; x < sq.Size; x++ {
-		if sq.data[x][y] != missing_value {
-			values = append(values, sq.data[x][y])
+		if sq.Has(x, y) {
+			values.Add(sq.data[x][y])
 		}
 	}
 	return values
 }
 
-func (sq Square) GetSectionValues(x int, y int) []int {
+func (sq Square) GetSectionValues(x int, y int) ValueSet {
 	cx, cy := sq.getSectionCentre(x, y)
 	return sq.getNeighbourValues(cx, cy)
 }
@@ -128,12 +136,12 @@ func (sq Square) getSectionCentre(x int, y int) (centreX int, centreY int) {
 	return centreX, centreY
 }
 
-func (sq Square) getNeighbourValues(x int, y int) []int {
-	values := make([]int, 0, sq.Size)
+func (sq Square) getNeighbourValues(x int, y int) ValueSet {
+	values := NewValueSet()
 	for dx := -1; dx <= 1; dx++ {
 		for dy := -1; dy <= 1; dy++ {
 			if sq.Exists(x+dx, y+dy) && sq.Has(x+dx, y+dy) {
-				values = append(values, sq.Get(x+dx, y+dy))
+				values.Add(sq.Get(x+dx, y+dy))
 			}
 		}
 	}
@@ -148,8 +156,8 @@ func (sq Square) String() string {
 			if y < sq.Size-1 {
 				delimeter = " "
 			}
-			value := fmt.Sprintf(missing_symbol)
-			if sq.data[x][y] != missing_value {
+			value := fmt.Sprintf(MISSING_SYMBOL)
+			if sq.Has(x, y) {
 				value = fmt.Sprintf("%d", sq.data[x][y])
 			}
 

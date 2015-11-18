@@ -5,7 +5,7 @@ import (
 	"testing"
 )
 
-func makeSquare() *Square {
+func makeLittleSquare() *Square {
 	sq := NewSquare(3)
 	sq.Set(0, 0, 1)
 	sq.Set(0, 1, 2)
@@ -19,94 +19,121 @@ func makeSquare() *Square {
 	return sq
 }
 
+func makeBigSquare() *Square {
+	sq := NewSquare(9)
+	for x := 0; x < 9; x++ {
+		for y := 0; y < 9; y++ {
+			sq.Set(x, y, Value((x+1)*(y+1)))
+		}
+	}
+	return sq
+}
+
 func TestCopy(t *testing.T) {
-	sq := makeSquare()
+	sq := makeLittleSquare()
 	cp := sq.Copy()
 	if !reflect.DeepEqual(sq, cp) {
 		t.Errorf("Expected: %v, actual: %v", sq, cp)
 	}
 }
 
-func TestGetRow(t *testing.T) {
-	sq := makeSquare()
-	vals := sq.GetRowValues(1)
-	if len(vals) != 3 {
-		t.Errorf("Expected: %d, actual: %d", 3, len(vals))
-	}
-	if vals[0] != 4 {
-		t.Errorf("Expected: %d, actual: %d", 4, vals[0])
-	}
-	if vals[1] != 5 {
-		t.Errorf("Expected: %d, actual: %d", 5, vals[1])
-	}
-	if vals[2] != 6 {
-		t.Errorf("Expected: %d, actual: %d", 6, vals[2])
-	}
+func TestSetGet(t *testing.T) {
+	sq := makeLittleSquare()
+	sq.Iterate(func(x, y int, z Value) error {
+		sq.Set(x, y, Value(x*y))
+		return nil
+	})
+
+	sq.Iterate(func(x int, y int, z Value) error {
+		v := sq.Get(x, y)
+		if v != Value(x*y) {
+			t.Errorf("Expected: %v, actual: %v", (x * y), v)
+		}
+		return nil
+	})
 }
 
-func TestGetRowWithMissing(t *testing.T) {
-	sq := makeSquare()
-	sq.Clear(0, 2)
-	vals := sq.GetRowValues(0)
-	if len(vals) != 2 {
-		t.Errorf("Expected: %d, actual: %d", 2, len(vals))
+func TestGetRow(t *testing.T) {
+	sq := makeLittleSquare()
+	sq.Clear(1, 1)
+
+	var tests = []struct {
+		row  int
+		vals ValueSet
+	}{
+		{0, NewValueSet(1, 2, 3)},
+		{1, NewValueSet(4, 6)},
+		{2, NewValueSet(7, 8, 9)},
 	}
-	if vals[0] != 1 {
-		t.Errorf("Expected: %d, actual: %d", 1, vals[0])
-	}
-	if vals[1] != 2 {
-		t.Errorf("Expected: %d, actual: %d", 2, vals[1])
+	for _, tc := range tests {
+		vals := sq.GetRowValues(tc.row)
+		if !vals.Equal(tc.vals) {
+			t.Errorf("Expected: %v, actual: %v", tc.vals, vals)
+		}
 	}
 }
 
 func TestGetColumn(t *testing.T) {
-	sq := makeSquare()
-	vals := sq.GetColumnValues(1)
-	if vals[0] != 2 {
-		t.Errorf("Expected: %d, actual: %d", 2, vals[0])
-	}
-	if vals[1] != 5 {
-		t.Errorf("Expected: %d, actual: %d", 5, vals[1])
-	}
-	if vals[2] != 8 {
-		t.Errorf("Expected: %d, actual: %d", 8, vals[2])
-	}
-}
+	sq := makeLittleSquare()
+	sq.Clear(2, 2)
 
-func TestGetColumnWithMissing(t *testing.T) {
-	sq := makeSquare()
-	sq.Clear(0, 0)
-	vals := sq.GetColumnValues(0)
-	if len(vals) != 2 {
-		t.Errorf("Expected: %d, actual: %d", 2, len(vals))
+	var tests = []struct {
+		y    int
+		vals ValueSet
+	}{
+		{0, NewValueSet(1, 4, 7)},
+		{1, NewValueSet(2, 5, 8)},
+		{2, NewValueSet(3, 6)},
 	}
-	if vals[0] != 4 {
-		t.Errorf("Expected: %d, actual: %d", 4, vals[0])
-	}
-	if vals[1] != 7 {
-		t.Errorf("Expected: %d, actual: %d", 7, vals[1])
+	for _, tc := range tests {
+		vals := sq.GetColumnValues(tc.y)
+		if !vals.Equal(tc.vals) {
+			t.Errorf("%d: Expected: %v, actual: %v", tc.y, tc.vals, vals)
+		}
 	}
 }
 
 func TestGetSection(t *testing.T) {
-	sq := NewSquare(9)
-	for x := 0; x < 9; x++ {
-		for y := 0; y < 9; y++ {
-			sq.Set(x, y, x*y)
+	sq := makeBigSquare()
+	var tests = []struct {
+		x, y int
+		vals ValueSet
+	}{
+		{0, 0, NewValueSet(1, 2, 3, 4, 6, 9)},
+		{8, 6, NewValueSet(49, 56, 63, 64, 72, 81)},
+	}
+	for _, tc := range tests {
+		vals := sq.GetSectionValues(tc.x, tc.y)
+		if !vals.Equal(tc.vals) {
+			t.Errorf("%d-%d: Expected: %v, actual: %v", tc.x, tc.y, tc.vals, vals)
 		}
 	}
-	{
-		expected := []int{1, 2, 2, 4}
-		actual := sq.GetSectionValues(0, 0)
-		if !reflect.DeepEqual(expected, actual) {
-			t.Errorf("Expected: %v, actual: %v", expected, actual)
+}
+
+func TestIsAllowed(t *testing.T) {
+	sq := makeBigSquare()
+
+	var tests = []struct {
+		x, y      int
+		z         Value
+		isAllowed bool
+	}{
+		{1, 1, 1, false},
+		{1, 1, 2, false},
+		{1, 1, 3, false},
+		{1, 1, 4, false},
+		{1, 1, 5, true},
+		{1, 1, 6, false},
+		{1, 1, 7, true},
+		{1, 1, 8, false},
+		{1, 1, 9, false},
+	}
+	for _, tc := range tests {
+		isAllowed := sq.IsAllowed(tc.x, tc.y, tc.z)
+		if isAllowed != tc.isAllowed {
+			t.Errorf("%d-%d=%d: Expected: %v, actual: %v", tc.x, tc.y, tc.z,
+				tc.isAllowed, isAllowed)
 		}
 	}
-	{
-		expected := []int{36, 42, 48, 42, 49, 56, 48, 56, 64}
-		actual := sq.GetSectionValues(8, 6)
-		if !reflect.DeepEqual(expected, actual) {
-			t.Errorf("Expected: %v, actual: %v", expected, actual)
-		}
-	}
+
 }

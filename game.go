@@ -15,10 +15,17 @@ const section_size = 3
 
 type Game struct {
 	square          *Square
-	CellsSolved     int
+	CellsToBeSolved int
 	GuessCount      int
 	SolutionChannel chan *Game
 	DeadLine        time.Time
+	Steps           []Step
+}
+
+type Step struct {
+	X int
+	Y int
+	Z Value
 }
 
 func newGame() *Game {
@@ -30,10 +37,13 @@ func newGame() *Game {
 func (g Game) copy() *Game {
 	ng := Game{}
 	ng.square = g.square.Copy()
-	ng.CellsSolved = g.CellsSolved
+	ng.CellsToBeSolved = g.CellsToBeSolved
 	ng.GuessCount = g.GuessCount
 	ng.SolutionChannel = g.SolutionChannel
 	ng.DeadLine = g.DeadLine
+	for _, s := range g.Steps {
+		ng.Steps = append(ng.Steps, Step{X: s.X, Y: s.Y, Z: s.Z})
+	}
 	return &ng
 }
 
@@ -61,13 +71,16 @@ func Load(lines string) (*Game, error) {
 			}
 			num, err := strconv.Atoi(val)
 			if err != nil {
-				return nil, fmt.Errorf("Invalid number '%s' for item row:%d, column:%d", val, x+1, y+1)
+				return nil, fmt.Errorf("Invalid value '%s' for item row:%d, column:%d", val, x+1, y+1)
 			}
 			if num < 0 || num > square_size {
 				return nil, fmt.Errorf("Invalid value %d for item row:%d, column:%d", num, x+1, y+1)
 
 			}
-			game.square.Set(x, y, num)
+			if !game.square.IsAllowed(x, y, Value(num)) {
+				return nil, fmt.Errorf("Duplicate value %d for item row:%d, column:%d", num, x+1, y+1)
+			}
+			game.square.Set(x, y, Value(num))
 		}
 		linesRead++
 	}
@@ -75,66 +88,8 @@ func Load(lines string) (*Game, error) {
 		return nil, fmt.Errorf("Not enough rows: needs %d, actual %d", square_size, linesRead)
 	}
 
-	err := game.validate()
-	if err != nil {
-		return nil, err
-	}
+	game.CellsToBeSolved = game.countEmptyValues()
 	return game, nil
-}
-
-func (g Game) validate() error {
-	// check for duplicate values in each row
-	for x := 0; x < g.square.Size; x++ {
-		row := g.square.GetRowValues(x)
-		hasDups, dupVal := containsDuplicates(row)
-		if hasDups {
-			return fmt.Errorf("Row %d contains duplicate value %d", x+1, dupVal)
-		}
-	}
-
-	// check for duplicate values in each column
-	for y := 0; y < g.square.Size; y++ {
-		column := g.square.GetColumnValues(y)
-		hasDups, dupVal := containsDuplicates(column)
-		if hasDups {
-			return fmt.Errorf("Column %d contains duplicate value %d", y+1, dupVal)
-		}
-	}
-
-	// check for duplicate values in each section
-	// only visit the centers of each section
-	for x := 1; x < g.square.Size; x += section_size {
-		for y := 1; y < g.square.Size; y += section_size {
-			section := g.square.GetSectionValues(x, y)
-			hasDups, dupVal := containsDuplicates(section)
-			if hasDups {
-				return fmt.Errorf("Cell %d-%d is in section with duplicate value %d", x+1, y+1, dupVal)
-			}
-		}
-	}
-
-	return nil
-}
-
-func containsDuplicates(array []int) (bool, int) {
-	for idx, i := range array {
-		if contains(array, i, idx) {
-			return true, i
-		}
-	}
-	return false, -1
-}
-
-func contains(array []int, value int, selfIdx int) bool {
-	for idx, i := range array {
-		if idx == selfIdx {
-			continue
-		}
-		if value == i {
-			return true
-		}
-	}
-	return false
 }
 
 func Solve(g *Game, timeout int, minSolutionCount int) ([]*Game, error) {
@@ -142,7 +97,7 @@ func Solve(g *Game, timeout int, minSolutionCount int) ([]*Game, error) {
 	solutionChannel := make(chan *Game, 1000)
 	duration := time.Duration(timeout) * time.Second
 
-	// package completion params within game
+	// Store completion variables within game
 	g.SolutionChannel = solutionChannel
 	g.DeadLine = time.Now().Add(duration)
 
@@ -150,8 +105,8 @@ func Solve(g *Game, timeout int, minSolutionCount int) ([]*Game, error) {
 	// Solutions will be reported back over solutionChannel
 	go solve(g)
 
+	// Wait for a solution
 	return waitforCompletion(solutionChannel, duration, minSolutionCount)
-
 }
 
 func waitforCompletion(solutionChannel chan *Game, duration time.Duration, minSolutionCount int) ([]*Game, error) {
@@ -163,23 +118,33 @@ outerLoop:
 		select {
 		case newSolution := <-solutionChannel:
 			if !solutionExists(solutions, newSolution) {
-				fmt.Fprintf(os.Stderr, "Solution is new:\n%s", newSolution)
+				if *_Verbose {
+					fmt.Fprintf(os.Stderr, "Solution is new:\n")
+				}
 				solutions = append(solutions, newSolution)
 				if len(solutions) >= minSolutionCount {
-					fmt.Fprintf(os.Stderr, "Enough solutions received: %d\n", len(solutions))
+					if *_Verbose {
+						fmt.Fprintf(os.Stderr, "Enough solutions received: %d\n", len(solutions))
+					}
 					break outerLoop
 				}
 			} else {
-				fmt.Fprintf(os.Stderr, "Solution exists")
+				if *_Verbose {
+					fmt.Fprintf(os.Stderr, "Solution exists")
+				}
 			}
 		case <-timer:
-			fmt.Fprintf(os.Stderr, "Timeout expired after %d secs\n", duration)
+			if *_Verbose {
+				fmt.Fprintf(os.Stderr, "Timeout expired after %d secs\n", duration)
+			}
 			break outerLoop
 		}
 	}
 
 	if len(solutions) == 0 {
-		return solutions, fmt.Errorf("No solutions found")
+		if *_Verbose {
+			return solutions, fmt.Errorf("No solutions found")
+		}
 	}
 	return solutions, nil
 }
@@ -197,11 +162,15 @@ func solutionExists(solutions []*Game, newSolution *Game) bool {
 func solve(g *Game) {
 	maxSteps := square_size * square_size
 
-	fmt.Fprintf(os.Stderr, "%p: Start solving\n", g)
+	if *_Verbose {
+		fmt.Fprintf(os.Stderr, "%p: Start solving\n", g)
+	}
 	for i := 0; i < maxSteps; i++ {
 
 		if time.Now().After(g.DeadLine) {
-			fmt.Fprintf(os.Stderr, "%p: Abort because deadline expired\n", g)
+			if *_Verbose {
+				fmt.Fprintf(os.Stderr, "%p: Abort because deadline expired\n", g)
+			}
 			return
 		}
 
@@ -217,20 +186,23 @@ func solve(g *Game) {
 			guessAndContinue(g)
 			return
 		}
-		fmt.Fprintf(os.Stderr, "%p: Solved %d cells this loop\n", g, cellsSolvedInStep)
-
-		if g.countEmptyValues() == 0 && g.validate() == nil {
-			fmt.Fprintf(os.Stderr, "%p: Got solution\n", g)
+		if *_Verbose {
+			fmt.Fprintf(os.Stderr, "%p: Solved %d cells this loop\n", g, cellsSolvedInStep)
+		}
+		if g.countEmptyValues() == 0 {
+			if *_Verbose {
+				fmt.Fprintf(os.Stderr, "%p: Got solution\n", g)
+			}
 			// we are done: report result back over solution-channel
 			g.SolutionChannel <- g
 			return
 		}
-
-		g.CellsSolved += cellsSolvedInStep
 	}
 
 	// unsolveable
-	fmt.Fprintf(os.Stderr, "%p: Abort after cells solved:%d\n", g, g.CellsSolved)
+	if *_Verbose {
+		fmt.Fprintf(os.Stderr, "%p: Abort at cells to go:%d\n", g, g.countEmptyValues())
+	}
 }
 
 func (g *Game) step() int {
@@ -242,10 +214,13 @@ func (g *Game) step() int {
 				mergedCandidates := g.findCandidates(x, y)
 				if len(mergedCandidates) == 0 {
 					// we have mad a wrong guess somwhere
-					fmt.Fprintf(os.Stderr, "%p: Cell %d-%d has zero candidates due to wrong guess upstream\n", g, x+1, y+1)
+					if *_Verbose {
+						fmt.Fprintf(os.Stderr, "%p: Cell %d-%d has zero candidates due to wrong guess upstream\n", g, x+1, y+1)
+					}
 					return -1
 				} else if len(mergedCandidates) == 1 {
 					g.square.Set(x, y, mergedCandidates[0])
+					g.Steps = append(g.Steps, Step{X: x, Y: y, Z: mergedCandidates[0]})
 					cellsSolved++
 				}
 			}
@@ -262,7 +237,9 @@ func guessAndContinue(g *Game) {
 		bestGuess := orderedBestGuesses[0]
 		for _, cand := range bestGuess.candidates {
 			cpy := g.copy()
-			fmt.Fprintf(os.Stderr, "%p: Got stuck -> Try %d-%d with value %d and continue\n", cpy, bestGuess.x+1, bestGuess.y+1, cand)
+			if *_Verbose {
+				fmt.Fprintf(os.Stderr, "%p: Got stuck -> Try %d-%d with value %d and continue\n", cpy, bestGuess.x+1, bestGuess.y+1, cand)
+			}
 			cpy.square.Set(bestGuess.x, bestGuess.y, cand)
 			g.GuessCount++
 			go solve(cpy)
@@ -272,7 +249,7 @@ func guessAndContinue(g *Game) {
 
 func (g *Game) findCellsWithLeastCandidates() []cell {
 	cells := make([]cell, 0, square_size*square_size)
-	g.square.Iterate(func(x int, y int, z int) error {
+	g.square.Iterate(func(x int, y int, z Value) error {
 		if !g.square.Has(x, y) {
 			cellCandidates := g.findCandidates(x, y)
 			if len(cellCandidates) > 1 {
@@ -286,13 +263,59 @@ func (g *Game) findCellsWithLeastCandidates() []cell {
 	return cells
 }
 
-func (g *Game) findCandidates(x int, y int) []int {
+func (g *Game) findCandidates(x int, y int) []Value {
 	mergedValues := mergeValues(
 		g.square.GetRowValues(x),
 		g.square.GetColumnValues(y),
 		g.square.GetSectionValues(x, y))
-	sort.Ints(mergedValues)
 	return findCandidates(mergedValues)
+}
+
+func (g *Game) countEmptyValues() int {
+	count := 0
+	g.square.Iterate(func(x int, y int, z Value) error {
+		if !g.square.Has(x, y) {
+			count++
+		}
+		return nil
+	})
+	return count
+}
+
+func mergeValues(rowValues ValueSet, columnValues ValueSet, sectionValues ValueSet) ValueSet {
+	vs := rowValues.Union(columnValues)
+	return vs.Union(sectionValues)
+}
+
+func findCandidates(existing ValueSet) []Value {
+	full := makeFull(square_size)
+	return full.Difference(existing).ToSlice()
+}
+
+func makeFull(size int) ValueSet {
+	return NewValueSet(1, 2, 3, 4, 5, 6, 7, 8, 9)
+}
+
+type cell struct {
+	x          int
+	y          int
+	candidates []Value
+}
+type CellByNumberOfCandidates []cell
+
+func (arr CellByNumberOfCandidates) Len() int      { return len(arr) }
+func (arr CellByNumberOfCandidates) Swap(i, j int) { arr[i], arr[j] = arr[j], arr[i] }
+func (arr CellByNumberOfCandidates) Less(i, j int) bool {
+	return len(arr[i].candidates) < len(arr[j].candidates)
+}
+
+func (g Game) Dump() string {
+	return g.square.String()
+}
+
+func (g Game) String() string {
+
+	return g.square.String()
 }
 
 func (g *Game) DumpGameState() {
@@ -318,62 +341,4 @@ func (g *Game) DumpGameState() {
 	}
 	fmt.Fprintf(os.Stderr, "___________________________________________________________________________________________________________________\n")
 	fmt.Fprintf(os.Stderr, "\n\n")
-}
-
-func (g *Game) countEmptyValues() int {
-	count := 0
-	g.square.Iterate(func(x, y, z int) error {
-		if !g.square.Has(x, y) {
-			count++
-		}
-		return nil
-	})
-	return count
-}
-
-func mergeValues(rowValues []int, columnValues []int, sectionValues []int) []int {
-	merged := append(rowValues, columnValues...)
-	return append(merged, sectionValues...)
-}
-
-func findCandidates(existing []int) []int {
-	full := makeFull(square_size)
-	candidates := minus(full, existing)
-
-	return candidates
-}
-
-func makeFull(size int) []int {
-	full := make([]int, size)
-	for i := 0; i < size; i++ {
-		full[i] = (i + 1)
-	}
-	return full
-}
-
-func minus(all []int, other []int) []int {
-	stripped := make([]int, 0, len(all))
-	for _, a := range all {
-		if !contains(other, a, -1) {
-			stripped = append(stripped, a)
-		}
-	}
-	return stripped
-}
-
-type cell struct {
-	x          int
-	y          int
-	candidates []int
-}
-type CellByNumberOfCandidates []cell
-
-func (arr CellByNumberOfCandidates) Len() int      { return len(arr) }
-func (arr CellByNumberOfCandidates) Swap(i, j int) { arr[i], arr[j] = arr[j], arr[i] }
-func (arr CellByNumberOfCandidates) Less(i, j int) bool {
-	return len(arr[i].candidates) < len(arr[j].candidates)
-}
-
-func (g Game) String() string {
-	return g.square.String()
 }

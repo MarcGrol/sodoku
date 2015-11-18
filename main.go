@@ -8,8 +8,10 @@ import (
 )
 
 var (
-	_Timeout      *int
-	_MinSolutions *int
+	defaultVerbose       = false
+	_Verbose       *bool = &defaultVerbose
+	_Timeout       *int
+	_MinSolutions  *int
 )
 
 func main() {
@@ -35,9 +37,9 @@ func main() {
 	}
 
 	for _, solution := range solutions {
-		fmt.Fprintf(os.Stdout, "%s\n", solution)
+		fmt.Fprintf(os.Stdout, "%s\n", solution.Dump())
 		fmt.Fprintf(os.Stderr, "steps:%d, guesses:%d\n\n",
-			solution.CellsSolved, solution.GuessCount)
+			solution.CellsToBeSolved, solution.GuessCount)
 	}
 
 	os.Exit(0)
@@ -53,6 +55,7 @@ func printUsage() {
 
 func processArgs() {
 	help := flag.Bool("help", false, "Usage information")
+	_Verbose = flag.Bool("verbose", false, "Verbose logging to stderr")
 	_Timeout = flag.Int("timeout", 10, "Timeout in secs before give up")
 	_MinSolutions = flag.Int("solutions", 1, "Nummber of solutions to wait for before give up")
 

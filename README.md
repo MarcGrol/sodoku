@@ -8,8 +8,8 @@ Educated guesses are run in dedicated go-routines: A bad guess will make the gor
 
 or
 
-    time sodoku < example.txt 2> /dev/null
+    time sodoku < data/example.txt 2> /dev/null
 
 or    
 
-    time sodoku < hard.txt 2> /dev/null
+    time sodoku < data/hard.txt 2> /dev/null
