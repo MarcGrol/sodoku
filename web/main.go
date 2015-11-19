@@ -3,7 +3,6 @@ package main
 import (
 	"errors"
 	"fmt"
-	"log"
 	"net/http"
 
 	"github.com/MarcGrol/sodoku/core"
@@ -12,6 +11,16 @@ import (
 
 const TIMEOUT = 2
 const MAX_SOLUTIONS = 1
+const HARD_EXAMPLE = `9 _ _ _ 2 _ _ _ 5
+_ _ _ 9 _ 5 _ _ _
+_ _ 7 _ 6 _ 4 _ _
+_ 5 _ _ _ _ _ 7 _
+8 _ 1 _ 7 _ 6 _ 2
+_ 2 _ _ _ _ _ 3 _
+_ _ 6 _ 4 _ 1 _ _
+_ _ _ 8 _ 3 _ _ _
+4 _ _ _ 9 _ _ _ 3
+`
 
 type sodokuHandler struct {
 }
@@ -27,34 +36,28 @@ func (eh *sodokuHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func (eh *sodokuHandler) post(w http.ResponseWriter, r *http.Request) {
-	exercise, err := FromJson(r.Body)
+func (eh *sodokuHandler) get(w http.ResponseWriter, r *http.Request) {
+	game, err := core.Load(HARD_EXAMPLE)
 	if err != nil {
 		writeError(w, http.StatusBadRequest, err)
 	}
-
-	game, err := core.LoadSteps(toCoreSteps(exercise.Steps))
-	if err != nil {
-		writeError(w, http.StatusBadRequest, err)
-	}
-
 	doSolve(w, r, game)
 }
 
-func (eh *sodokuHandler) get(w http.ResponseWriter, r *http.Request) {
-	game, err := core.Load(`9 _ _ _ 2 _ _ _ 5
-_ _ _ 9 _ 5 _ _ _
-_ _ 7 _ 6 _ 4 _ _
-_ 5 _ _ _ _ _ 7 _
-8 _ 1 _ 7 _ 6 _ 2
-_ 2 _ _ _ _ _ 3 _
-_ _ 6 _ 4 _ 1 _ _
-_ _ _ 8 _ 3 _ _ _
-4 _ _ _ 9 _ _ _ 3
-`)
+func (eh *sodokuHandler) post(w http.ResponseWriter, r *http.Request) {
+	// read incoming steps
+	input, err := FromJson(r.Body)
 	if err != nil {
 		writeError(w, http.StatusBadRequest, err)
 	}
+
+	// load
+	game, err := core.LoadSteps(toCoreSteps(input.Steps))
+	if err != nil {
+		writeError(w, http.StatusBadRequest, err)
+	}
+
+	// solve and return response
 	doSolve(w, r, game)
 }
 
@@ -66,7 +69,6 @@ func doSolve(w http.ResponseWriter, r *http.Request, game *core.Game) {
 
 	resp := Response{Error: nil}
 	for _, coreSolution := range coreSolutions {
-		log.Printf("steps:%v", len(coreSolution.Steps))
 		solution := Game{Steps: fromCoreSteps(coreSolution.Steps)}
 		resp.Solutions = append(resp.Solutions, solution)
 	}

@@ -10,20 +10,20 @@ import (
 	"time"
 )
 
-const square_size = 9
-const section_size = 3
+const SQUARE_SIZE = 9
+const SECTION_SIZE = 3
 
 var (
 	Verbose bool = false
 )
 
 type Game struct {
-	square          *Square
 	CellsToBeSolved int
 	GuessCount      int
-	SolutionChannel chan *Game
-	DeadLine        time.Time
 	Steps           []Step
+	square          *Square
+	solutionChannel chan *Game
+	deadline        time.Time
 }
 
 type Step struct {
@@ -36,7 +36,7 @@ type Step struct {
 
 func newGame() *Game {
 	g := Game{}
-	g.square = NewSquare(square_size)
+	g.square = NewSquare(SQUARE_SIZE)
 	return &g
 }
 
@@ -45,8 +45,8 @@ func (g Game) copy() *Game {
 	ng.square = g.square.Copy()
 	ng.CellsToBeSolved = g.CellsToBeSolved
 	ng.GuessCount = g.GuessCount
-	ng.SolutionChannel = g.SolutionChannel
-	ng.DeadLine = g.DeadLine
+	ng.solutionChannel = g.solutionChannel
+	ng.deadline = g.deadline
 	for _, s := range g.Steps {
 		ng.Steps = append(ng.Steps, Step{X: s.X, Y: s.Y, Z: s.Z})
 	}
@@ -63,8 +63,7 @@ func LoadSteps(steps []Step) (*Game, error) {
 			return nil, fmt.Errorf("Duplicate value %d for item row:%d, column:%d for step %d",
 				step.Z, step.X, step.Y, idx)
 		}
-		game.square.Set(step.X, step.Y, Value(step.Z))
-		game.Steps = append(game.Steps, Step{X: step.X, Y: step.Y, Z: Value(step.Z), Initial: true, IsGuess: false})
+		game.set(step.X, step.Y, Value(step.Z), true, false)
 	}
 	game.CellsToBeSolved = game.countEmptyValues()
 	return game, nil
@@ -75,7 +74,7 @@ func Load(lines string) (*Game, error) {
 	game := newGame()
 	for x, line := range strings.Split(lines, "\n") {
 
-		if x >= square_size {
+		if x >= SQUARE_SIZE {
 			break
 		}
 		if line == "" {
@@ -83,9 +82,9 @@ func Load(lines string) (*Game, error) {
 		}
 
 		splitted := strings.Split(line, " ")
-		if len(splitted) != square_size {
+		if len(splitted) != SQUARE_SIZE {
 			return nil, fmt.Errorf("Invalid number of columns for row %d: needs %d, actual %d", x+1,
-				square_size, len(splitted))
+				SQUARE_SIZE, len(splitted))
 		}
 		for y, val := range splitted {
 			if val == "_" {
@@ -96,20 +95,19 @@ func Load(lines string) (*Game, error) {
 			if err != nil {
 				return nil, fmt.Errorf("Invalid value '%s' for item row:%d, column:%d", val, x+1, y+1)
 			}
-			if num < 0 || num > square_size {
+			if num < 0 || num > SQUARE_SIZE {
 				return nil, fmt.Errorf("Invalid value %d for item row:%d, column:%d", num, x+1, y+1)
 
 			}
 			if !game.square.IsAllowed(x, y, Value(num)) {
 				return nil, fmt.Errorf("Duplicate value %d for item row:%d, column:%d", num, x+1, y+1)
 			}
-			game.square.Set(x, y, Value(num))
-			game.Steps = append(game.Steps, Step{X: x, Y: y, Z: Value(num), Initial: true, IsGuess: false})
+			game.set(x, y, Value(num), true, false)
 		}
 		linesRead++
 	}
-	if linesRead != square_size {
-		return nil, fmt.Errorf("Not enough rows: needs %d, actual %d", square_size, linesRead)
+	if linesRead != SQUARE_SIZE {
+		return nil, fmt.Errorf("Not enough rows: needs %d, actual %d", SQUARE_SIZE, linesRead)
 	}
 
 	game.CellsToBeSolved = game.countEmptyValues()
@@ -122,8 +120,8 @@ func Solve(g *Game, timeout int, minSolutionCount int) ([]*Game, error) {
 	duration := time.Duration(timeout) * time.Second
 
 	// Store completion variables within game
-	g.SolutionChannel = solutionChannel
-	g.DeadLine = time.Now().Add(duration)
+	g.solutionChannel = solutionChannel
+	g.deadline = time.Now().Add(duration)
 
 	// Start solving in background
 	// Solutions will be reported back over solutionChannel
@@ -184,14 +182,14 @@ func solutionExists(solutions []*Game, newSolution *Game) bool {
 }
 
 func solve(g *Game) {
-	maxSteps := square_size * square_size
+	maxSteps := SQUARE_SIZE * SQUARE_SIZE
 
 	if Verbose {
 		fmt.Fprintf(os.Stderr, "%p: Start solving\n", g)
 	}
 	for i := 0; i < maxSteps; i++ {
 
-		if time.Now().After(g.DeadLine) {
+		if time.Now().After(g.deadline) {
 			if Verbose {
 				fmt.Fprintf(os.Stderr, "%p: Abort because deadline expired\n", g)
 			}
@@ -218,7 +216,7 @@ func solve(g *Game) {
 				fmt.Fprintf(os.Stderr, "%p: Got solution\n", g)
 			}
 			// we are done: report result back over solution-channel
-			g.SolutionChannel <- g
+			g.solutionChannel <- g
 			return
 		}
 	}
@@ -243,8 +241,7 @@ func (g *Game) step() int {
 					}
 					return -1
 				} else if len(mergedCandidates) == 1 {
-					g.square.Set(x, y, mergedCandidates[0])
-					g.Steps = append(g.Steps, Step{X: x, Y: y, Z: mergedCandidates[0], Initial: false, IsGuess: false})
+					g.set(x, y, mergedCandidates[0], false, false)
 					cellsSolved++
 				}
 			}
@@ -252,6 +249,14 @@ func (g *Game) step() int {
 	}
 
 	return cellsSolved
+}
+
+func (g *Game) set(x int, y int, z Value, initial bool, isGuess bool) {
+	g.square.Set(x, y, z)
+	g.Steps = append(g.Steps, Step{X: x, Y: y, Z: z, Initial: initial, IsGuess: isGuess})
+	if isGuess == true {
+		g.GuessCount++
+	}
 }
 
 func guessAndContinue(g *Game) {
@@ -264,16 +269,14 @@ func guessAndContinue(g *Game) {
 			if Verbose {
 				fmt.Fprintf(os.Stderr, "%p: Got stuck -> Try %d-%d with value %d and continue\n", cpy, bestGuess.x+1, bestGuess.y+1, cand)
 			}
-			cpy.square.Set(bestGuess.x, bestGuess.y, cand)
-			cpy.Steps = append(g.Steps, Step{X: bestGuess.x, Y: bestGuess.y, Z: cand, Initial: false, IsGuess: true})
-			cpy.GuessCount++
+			cpy.set(bestGuess.x, bestGuess.y, cand, false, true)
 			go solve(cpy)
 		}
 	}
 }
 
 func (g *Game) findCellsWithLeastCandidates() []cell {
-	cells := make([]cell, 0, square_size*square_size)
+	cells := make([]cell, 0, SQUARE_SIZE*SQUARE_SIZE)
 	g.square.Iterate(func(x int, y int, z Value) error {
 		if !g.square.Has(x, y) {
 			cellCandidates := g.findCandidates(x, y)
@@ -313,7 +316,7 @@ func mergeValues(rowValues ValueSet, columnValues ValueSet, sectionValues ValueS
 }
 
 func findCandidates(existing ValueSet) []Value {
-	full := makeFull(square_size)
+	full := makeFull(SQUARE_SIZE)
 	return full.Difference(existing).ToSlice()
 }
 
