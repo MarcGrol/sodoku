@@ -6,8 +6,10 @@ import (
 	"math"
 )
 
-const MISSING_VALUE = 0
-const MISSING_SYMBOL = "_"
+const (
+	MISSING_VALUE  = 0
+	MISSING_SYMBOL = "_"
+)
 
 type Square struct {
 	data        [][]Value

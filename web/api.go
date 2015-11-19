@@ -27,12 +27,12 @@ type Step struct {
 }
 
 func FromJson(reader io.Reader) (*Game, error) {
-	exerc := Game{}
-	err := json.NewDecoder(reader).Decode(&exerc)
+	game := Game{}
+	err := json.NewDecoder(reader).Decode(&game)
 	if err != nil {
 		return nil, err
 	}
-	return &exerc, nil
+	return &game, nil
 }
 
 func (resp Response) ToJson(writer io.Writer) error {

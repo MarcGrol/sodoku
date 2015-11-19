@@ -37,7 +37,7 @@ func (eh *sodokuHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 }
 
 func (eh *sodokuHandler) get(w http.ResponseWriter, r *http.Request) {
-	game, err := solver.Load(HARD_EXAMPLE)
+	game, err := solver.LoadString(HARD_EXAMPLE)
 	if err != nil {
 		writeError(w, http.StatusBadRequest, err)
 	}

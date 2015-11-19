@@ -10,8 +10,10 @@ import (
 	"time"
 )
 
-const SQUARE_SIZE = 9
-const SECTION_SIZE = 3
+const (
+	SQUARE_SIZE  = 9
+	SECTION_SIZE = 3
+)
 
 var (
 	Verbose bool = false
@@ -32,6 +34,12 @@ type Step struct {
 	Z       Value
 	Initial bool
 	IsGuess bool
+}
+
+func debug(format string, args ...interface{}) {
+	if Verbose {
+		fmt.Fprintf(os.Stderr, format, args)
+	}
 }
 
 func newGame() *Game {
@@ -69,7 +77,7 @@ func LoadSteps(steps []Step) (*Game, error) {
 	return game, nil
 }
 
-func Load(lines string) (*Game, error) {
+func LoadString(lines string) (*Game, error) {
 	linesRead := 0
 	game := newGame()
 	for x, line := range strings.Split(lines, "\n") {
@@ -140,33 +148,23 @@ outerLoop:
 		select {
 		case newSolution := <-solutionChannel:
 			if !solutionExists(solutions, newSolution) {
-				if Verbose {
-					fmt.Fprintf(os.Stderr, "Solution is new:\n")
-				}
+				debug("Solution is new:\n")
 				solutions = append(solutions, newSolution)
 				if len(solutions) >= minSolutionCount {
-					if Verbose {
-						fmt.Fprintf(os.Stderr, "Enough solutions received: %d\n", len(solutions))
-					}
+					debug("Enough solutions received: %d\n", len(solutions))
 					break outerLoop
 				}
 			} else {
-				if Verbose {
-					fmt.Fprintf(os.Stderr, "Solution exists")
-				}
+				debug("Solution exists")
 			}
 		case <-timer:
-			if Verbose {
-				fmt.Fprintf(os.Stderr, "Timeout expired after %d secs\n", duration)
-			}
+			debug("Timeout expired after %d secs\n", duration)
 			break outerLoop
 		}
 	}
 
 	if len(solutions) == 0 {
-		if Verbose {
-			return solutions, fmt.Errorf("No solutions found")
-		}
+		debug("No solutions found")
 	}
 	return solutions, nil
 }
@@ -184,15 +182,12 @@ func solutionExists(solutions []*Game, newSolution *Game) bool {
 func solve(g *Game) {
 	maxSteps := SQUARE_SIZE * SQUARE_SIZE
 
-	if Verbose {
-		fmt.Fprintf(os.Stderr, "%p: Start solving\n", g)
-	}
+	debug("%p: Start solving\n", g)
 	for i := 0; i < maxSteps; i++ {
 
+		// This is a way to cleanly terminate running goroutines when game completed (due to timer or completion)
 		if time.Now().After(g.deadline) {
-			if Verbose {
-				fmt.Fprintf(os.Stderr, "%p: Abort because deadline expired\n", g)
-			}
+			debug("%p: Abort because deadline expired\n", g)
 			return
 		}
 
@@ -208,13 +203,11 @@ func solve(g *Game) {
 			guessAndContinue(g)
 			return
 		}
-		if Verbose {
-			fmt.Fprintf(os.Stderr, "%p: Solved %d cells this loop\n", g, cellsSolvedInStep)
-		}
+
+		debug("%p: Solved %d cells this loop\n", g, cellsSolvedInStep)
+
 		if g.countEmptyValues() == 0 {
-			if Verbose {
-				fmt.Fprintf(os.Stderr, "%p: Got solution\n", g)
-			}
+			debug("%p: Got solution\n", g)
 			// we are done: report result back over solution-channel
 			g.solutionChannel <- g
 			return
@@ -222,9 +215,7 @@ func solve(g *Game) {
 	}
 
 	// unsolveable
-	if Verbose {
-		fmt.Fprintf(os.Stderr, "%p: Abort at cells to go:%d\n", g, g.countEmptyValues())
-	}
+	debug("%p: Abort at cells to go:%d\n", g, g.countEmptyValues())
 }
 
 func (g *Game) step() int {
@@ -236,9 +227,7 @@ func (g *Game) step() int {
 				mergedCandidates := g.findCandidates(x, y)
 				if len(mergedCandidates) == 0 {
 					// we have mad a wrong guess somwhere
-					if Verbose {
-						fmt.Fprintf(os.Stderr, "%p: Cell %d-%d has zero candidates due to wrong guess upstream\n", g, x+1, y+1)
-					}
+					debug("%p: Cell %d-%d has zero candidates due to wrong guess upstream\n", g, x+1, y+1)
 					return -1
 				} else if len(mergedCandidates) == 1 {
 					g.set(x, y, mergedCandidates[0], false, false)
@@ -266,12 +255,14 @@ func guessAndContinue(g *Game) {
 		bestGuess := orderedBestGuesses[0]
 		for _, cand := range bestGuess.candidates {
 			cpy := g.copy()
-			if Verbose {
-				fmt.Fprintf(os.Stderr, "%p: Got stuck -> Try %d-%d with value %d and continue\n", cpy, bestGuess.x+1, bestGuess.y+1, cand)
-			}
+			debug("%p -> %p: Got stuck -> Try %d-%d with value %d and continue\n",
+				g, cpy, bestGuess.x+1, bestGuess.y+1, cand)
 			cpy.set(bestGuess.x, bestGuess.y, cand, false, true)
 			go solve(cpy)
 		}
+	} else {
+		// unsolveable
+		debug("%p: No best guesses found at:%d\n", g, g.countEmptyValues())
 	}
 }
 
@@ -286,6 +277,7 @@ func (g *Game) findCellsWithLeastCandidates() []cell {
 		}
 		return nil
 	})
+	// cells with least number of candidate-values on top
 	sort.Sort(CellByNumberOfCandidates(cells))
 
 	return cells
@@ -297,17 +289,6 @@ func (g *Game) findCandidates(x int, y int) []Value {
 		g.square.GetColumnValues(y),
 		g.square.GetSectionValues(x, y))
 	return findCandidates(mergedValues)
-}
-
-func (g *Game) countEmptyValues() int {
-	count := 0
-	g.square.Iterate(func(x int, y int, z Value) error {
-		if !g.square.Has(x, y) {
-			count++
-		}
-		return nil
-	})
-	return count
 }
 
 func mergeValues(rowValues ValueSet, columnValues ValueSet, sectionValues ValueSet) ValueSet {
@@ -335,6 +316,17 @@ func (arr CellByNumberOfCandidates) Len() int      { return len(arr) }
 func (arr CellByNumberOfCandidates) Swap(i, j int) { arr[i], arr[j] = arr[j], arr[i] }
 func (arr CellByNumberOfCandidates) Less(i, j int) bool {
 	return len(arr[i].candidates) < len(arr[j].candidates)
+}
+
+func (g *Game) countEmptyValues() int {
+	count := 0
+	g.square.Iterate(func(x int, y int, z Value) error {
+		if !g.square.Has(x, y) {
+			count++
+		}
+		return nil
+	})
+	return count
 }
 
 func (g Game) Dump() string {

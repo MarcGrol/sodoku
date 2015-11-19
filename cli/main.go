@@ -10,10 +10,9 @@ import (
 )
 
 var (
-	defaultVerbose       = false
-	_Verbose       *bool = &defaultVerbose
-	_Timeout       *int
-	_MinSolutions  *int
+	_Verbose      *bool
+	_Timeout      *int
+	_MinSolutions *int
 )
 
 func main() {
@@ -25,7 +24,7 @@ func main() {
 		os.Exit(-2)
 	}
 
-	game, err := solver.Load(string(gameData))
+	game, err := solver.LoadString(string(gameData))
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error loading game: %s", err)
 		os.Exit(-2)
