@@ -1,4 +1,4 @@
-package main
+package core
 
 import "testing"
 
@@ -176,7 +176,7 @@ _ 9 _ _ _ _ 4 _ _
 }
 
 func TestSolveImpossibleSolution(t *testing.T) {
-	gameData := `9 _ _ _ _ _ _ _ _
+	gameData := `_ _ _ _ _ _ _ _ _
 _ _ _ _ _ _ _ _ _
 _ _ _ _ _ _ _ _ _
 _ _ _ _ _ _ _ _ _

@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
+
+	"github.com/MarcGrol/sodoku/core"
 )
 
 var (
@@ -23,13 +25,13 @@ func main() {
 		os.Exit(-2)
 	}
 
-	game, err := Load(string(gameData))
+	game, err := core.Load(string(gameData))
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error loading game: %s", err)
 		os.Exit(-2)
 	}
 
-	solutions, err := Solve(game, *_Timeout, *_MinSolutions)
+	solutions, err := core.Solve(game, *_Timeout, *_MinSolutions)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error solving game: %s", err)
 		game.DumpGameState()
@@ -64,6 +66,8 @@ func processArgs() {
 	if help != nil && *help == true {
 		printUsage()
 	}
+
+	core.Verbose = *_Verbose
 
 	fmt.Fprintf(os.Stderr, "Using timeout %d and minSolutions: %d\n", *_Timeout, *_MinSolutions)
 }

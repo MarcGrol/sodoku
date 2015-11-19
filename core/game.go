@@ -1,4 +1,4 @@
-package main
+package core
 
 import (
 	"fmt"
@@ -12,6 +12,10 @@ import (
 
 const square_size = 9
 const section_size = 3
+
+var (
+	Verbose bool = false
+)
 
 type Game struct {
 	square          *Square
@@ -45,6 +49,22 @@ func (g Game) copy() *Game {
 		ng.Steps = append(ng.Steps, Step{X: s.X, Y: s.Y, Z: s.Z})
 	}
 	return &ng
+}
+
+func LoadSteps(steps []Step) (*Game, error) {
+	game := newGame()
+	for idx, step := range steps {
+		if !game.square.Exists(step.X, step.Y) {
+			return nil, fmt.Errorf("Invalid offset: %d-%d for step %d", step.X, step.Y, idx)
+		}
+		if !game.square.IsAllowed(step.X, step.Y, Value(step.Z)) {
+			return nil, fmt.Errorf("Duplicate value %d for item row:%d, column:%d for step %d",
+				step.Z, step.X, step.Y, idx)
+		}
+		game.square.Set(step.X, step.Y, Value(step.Z))
+	}
+	game.CellsToBeSolved = game.countEmptyValues()
+	return game, nil
 }
 
 func Load(lines string) (*Game, error) {
@@ -118,23 +138,23 @@ outerLoop:
 		select {
 		case newSolution := <-solutionChannel:
 			if !solutionExists(solutions, newSolution) {
-				if *_Verbose {
+				if Verbose {
 					fmt.Fprintf(os.Stderr, "Solution is new:\n")
 				}
 				solutions = append(solutions, newSolution)
 				if len(solutions) >= minSolutionCount {
-					if *_Verbose {
+					if Verbose {
 						fmt.Fprintf(os.Stderr, "Enough solutions received: %d\n", len(solutions))
 					}
 					break outerLoop
 				}
 			} else {
-				if *_Verbose {
+				if Verbose {
 					fmt.Fprintf(os.Stderr, "Solution exists")
 				}
 			}
 		case <-timer:
-			if *_Verbose {
+			if Verbose {
 				fmt.Fprintf(os.Stderr, "Timeout expired after %d secs\n", duration)
 			}
 			break outerLoop
@@ -142,7 +162,7 @@ outerLoop:
 	}
 
 	if len(solutions) == 0 {
-		if *_Verbose {
+		if Verbose {
 			return solutions, fmt.Errorf("No solutions found")
 		}
 	}
@@ -162,13 +182,13 @@ func solutionExists(solutions []*Game, newSolution *Game) bool {
 func solve(g *Game) {
 	maxSteps := square_size * square_size
 
-	if *_Verbose {
+	if Verbose {
 		fmt.Fprintf(os.Stderr, "%p: Start solving\n", g)
 	}
 	for i := 0; i < maxSteps; i++ {
 
 		if time.Now().After(g.DeadLine) {
-			if *_Verbose {
+			if Verbose {
 				fmt.Fprintf(os.Stderr, "%p: Abort because deadline expired\n", g)
 			}
 			return
@@ -186,11 +206,11 @@ func solve(g *Game) {
 			guessAndContinue(g)
 			return
 		}
-		if *_Verbose {
+		if Verbose {
 			fmt.Fprintf(os.Stderr, "%p: Solved %d cells this loop\n", g, cellsSolvedInStep)
 		}
 		if g.countEmptyValues() == 0 {
-			if *_Verbose {
+			if Verbose {
 				fmt.Fprintf(os.Stderr, "%p: Got solution\n", g)
 			}
 			// we are done: report result back over solution-channel
@@ -200,7 +220,7 @@ func solve(g *Game) {
 	}
 
 	// unsolveable
-	if *_Verbose {
+	if Verbose {
 		fmt.Fprintf(os.Stderr, "%p: Abort at cells to go:%d\n", g, g.countEmptyValues())
 	}
 }
@@ -214,7 +234,7 @@ func (g *Game) step() int {
 				mergedCandidates := g.findCandidates(x, y)
 				if len(mergedCandidates) == 0 {
 					// we have mad a wrong guess somwhere
-					if *_Verbose {
+					if Verbose {
 						fmt.Fprintf(os.Stderr, "%p: Cell %d-%d has zero candidates due to wrong guess upstream\n", g, x+1, y+1)
 					}
 					return -1
@@ -237,7 +257,7 @@ func guessAndContinue(g *Game) {
 		bestGuess := orderedBestGuesses[0]
 		for _, cand := range bestGuess.candidates {
 			cpy := g.copy()
-			if *_Verbose {
+			if Verbose {
 				fmt.Fprintf(os.Stderr, "%p: Got stuck -> Try %d-%d with value %d and continue\n", cpy, bestGuess.x+1, bestGuess.y+1, cand)
 			}
 			cpy.square.Set(bestGuess.x, bestGuess.y, cand)
