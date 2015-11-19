@@ -12,7 +12,7 @@ or
 
 or    
 
-    $ cli < data/hard.txt
+    $ cli < data/hardest.txt
 
 ## Usage web-service
 
