@@ -36,12 +36,6 @@ type Step struct {
 	IsGuess bool
 }
 
-func debug(format string, args ...interface{}) {
-	if Verbose {
-		fmt.Fprintf(os.Stderr, format, args...)
-	}
-}
-
 func newGame() *Game {
 	g := Game{}
 	g.square = NewSquare(SQUARE_SIZE)
@@ -187,7 +181,7 @@ func solve(g *Game) {
 
 		// This is a way to cleanly terminate running goroutines when game completed (due to timer or completion)
 		if time.Now().After(g.deadline) {
-			debug("%p: Abort because deadline expired\n", g)
+			warning("%p: Abort because deadline expired\n", g)
 			return
 		}
 
@@ -215,7 +209,7 @@ func solve(g *Game) {
 	}
 
 	// unsolveable
-	debug("%p: Abort at cells to go:%d\n", g, g.countEmptyValues())
+	warning("%p: Abort at cells to go:%d\n", g, g.countEmptyValues())
 }
 
 func (g *Game) step() int {
@@ -262,7 +256,7 @@ func guessAndContinue(g *Game) {
 		}
 	} else {
 		// unsolveable
-		debug("%p: No best guesses found at:%d\n", g, g.countEmptyValues())
+		warning("%p: No best guesses found at:%d\n", g, g.countEmptyValues())
 	}
 }
 

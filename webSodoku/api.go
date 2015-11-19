@@ -3,6 +3,8 @@ package main
 import (
 	"encoding/json"
 	"io"
+
+	"github.com/MarcGrol/sodoku/solver"
 )
 
 type Response struct {
@@ -15,7 +17,12 @@ type ErrorDescriptor struct {
 }
 
 type Game struct {
+	Board Board  `json:"board"`
 	Steps []Step `json:"steps"`
+}
+
+type Board struct {
+	Rows [solver.SQUARE_SIZE][solver.SQUARE_SIZE]int `json:"rows"`
 }
 
 type Step struct {

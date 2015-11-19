@@ -16,9 +16,9 @@ var (
 )
 
 func main() {
-	processArgs()
+	filename := processArgs()
 
-	gameData, err := ioutil.ReadAll(os.Stdin)
+	gameData, err := readInput(filename)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error reading game-data from stdin: %s", err)
 		os.Exit(-2)
@@ -46,6 +46,17 @@ func main() {
 	os.Exit(0)
 }
 
+func readInput(filename string) ([]byte, error) {
+	var gameData []byte
+	var err error
+	if filename != "" {
+		gameData, err = ioutil.ReadFile(filename)
+	} else {
+		gameData, err = ioutil.ReadAll(os.Stdin)
+	}
+	return gameData, err
+}
+
 func printUsage() {
 	fmt.Fprintf(os.Stderr, "\nUsage:\n")
 	fmt.Fprintf(os.Stderr, " %s [flags]\n", os.Args[0])
@@ -54,7 +65,7 @@ func printUsage() {
 	os.Exit(1)
 }
 
-func processArgs() {
+func processArgs() string {
 	help := flag.Bool("help", false, "Usage information")
 	_Verbose = flag.Bool("verbose", false, "Verbose logging to stderr")
 	_Timeout = flag.Int("timeout", 10, "Timeout in secs before give up")
@@ -68,5 +79,7 @@ func processArgs() {
 
 	solver.Verbose = *_Verbose
 
-	fmt.Fprintf(os.Stderr, "Using timeout %d and minSolutions: %d\n", *_Timeout, *_MinSolutions)
+	fmt.Fprintf(os.Stderr, "Using timeout %d and solutions: %d\n", *_Timeout, *_MinSolutions)
+
+	return flag.Arg(0)
 }
