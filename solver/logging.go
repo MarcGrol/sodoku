@@ -5,6 +5,10 @@ import (
 	"os"
 )
 
+var (
+	Verbose bool = false
+)
+
 func warning(format string, args ...interface{}) {
 	fmt.Fprintf(os.Stderr, "WARNING:")
 	fmt.Fprintf(os.Stderr, format, args...)
