@@ -3,6 +3,8 @@ package solver
 import (
 	"log"
 	"os"
+
+	"github.com/MarcGrol/sodoku/solver"
 )
 
 var (
@@ -12,7 +14,7 @@ var (
 
 // Job represents the job to be run
 type Job struct {
-	Payload *Game
+	Payload *solver.Game
 }
 
 // A buffered channel that we can send work requests on.

@@ -38,7 +38,7 @@ type Step struct {
 
 func debug(format string, args ...interface{}) {
 	if Verbose {
-		fmt.Fprintf(os.Stderr, format, args)
+		fmt.Fprintf(os.Stderr, format, args...)
 	}
 }
 

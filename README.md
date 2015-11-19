@@ -10,24 +10,25 @@ Educated guesses are run in dedicated go-routines: A bad guess will make the gor
 
     $ go install ./...
     
-Expect programs "cli" and "web" to be in ${GOPATH}/bin    
+Expect programs "cliSodoku" and "webSodoku" to be in ${GOPATH}/bin    
     
 ## Usage of command-line tool
 
-    $ cli -h
+    $ cliSodoku -h
 
 or
 
-    $ cli < data/example.txt
+    $ cliSodoku < data/example.txt
 
 or    
 
-    $ cli < data/hardest.txt
+    $ cliSodoku < data/hardest.txt
 
 ## Usage of web-service
 
+    $ webSodoku -h
 
-    $ web
+    $ webSodoku
 
 and fetch the steps for a hard solution using:    
 

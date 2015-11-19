@@ -2,8 +2,10 @@ package main
 
 import (
 	"errors"
+	"flag"
 	"fmt"
 	"net/http"
+	"os"
 
 	"github.com/MarcGrol/sodoku/solver"
 	"github.com/justinas/alice"
@@ -21,6 +23,13 @@ _ _ 6 _ 4 _ 1 _ _
 _ _ _ 8 _ 3 _ _ _
 4 _ _ _ 9 _ _ _ 3
 `
+
+var (
+	_Timeout      *int
+	_MinSolutions *int
+	_Verbose      *bool
+	_Port         *int
+)
 
 type sodokuHandler struct {
 }
@@ -107,7 +116,10 @@ func writeSuccess(w http.ResponseWriter, resp Response) {
 }
 
 func main() {
-	solver.Verbose = true
+	processArgs()
+
+	solver.Verbose = *_Verbose
+
 	h := &sodokuHandler{}
 	// configure middleware around our example
 	chain := alice.New(loggingHandler, countingHandler).Then(h)
@@ -115,6 +127,30 @@ func main() {
 	mux := http.NewServeMux()
 	mux.Handle("/sodoku", chain)
 
-	fmt.Printf("Start listening at http://localhost:3000/\n")
-	http.ListenAndServe(":3000", chain)
+	fmt.Printf("Start listening at http://localhost:%d/\n", *_Port)
+	http.ListenAndServe(fmt.Sprintf(":%d", *_Port), chain)
+}
+
+func printUsage() {
+	fmt.Fprintf(os.Stderr, "\nUsage:\n")
+	fmt.Fprintf(os.Stderr, " %s [flags]\n", os.Args[0])
+	flag.PrintDefaults()
+	fmt.Fprintf(os.Stderr, "\n")
+	os.Exit(1)
+}
+
+func processArgs() {
+	help := flag.Bool("help", false, "Usage information")
+	_Verbose = flag.Bool("verbose", false, "Verbose logging to stderr")
+	_Timeout = flag.Int("timeout", 10, "Timeout in secs before give up")
+	_MinSolutions = flag.Int("solutions", 1, "Nummber of solutions to wait for before give up")
+	_Port = flag.Int("port", 3000, "Port web-server is listening at")
+
+	flag.Parse()
+
+	if help != nil && *help == true {
+		printUsage()
+	}
+
+	fmt.Fprintf(os.Stderr, "Using timeout %d and minSolutions: %d\n", *_Timeout, *_MinSolutions)
 }
