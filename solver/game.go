@@ -15,10 +15,6 @@ const (
 	SECTION_SIZE = 3
 )
 
-var (
-	Verbose bool = false
-)
-
 type Game struct {
 	CellsToBeSolved int
 	GuessCount      int

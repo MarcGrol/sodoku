@@ -2,6 +2,7 @@ package solver
 
 import (
 	"bytes"
+	"errors"
 	"fmt"
 	"math"
 )
@@ -100,50 +101,50 @@ func (sq Square) GetColumnValues(y int) ValueSet {
 	return values
 }
 
+type point struct {
+	x, y int
+}
+
 func (sq Square) GetSectionValues(x int, y int) ValueSet {
-	cx, cy := sq.getSectionCentre(x, y)
-	return sq.getNeighbourValues(cx, cy)
+	centre, _ := getSectionCentre(x, y)
+	return sq.getNeighbourValues(centre)
 }
 
-func (sq Square) getSectionCentre(x int, y int) (centreX int, centreY int) {
-	// TODO would this work for 16x16 or 25x25?
-	remainderX := x % sq.SectionSize
-	if remainderX == 0 {
-		// above centre
-		centreX = x + 1
-	} else if remainderX == 1 {
-		// is centre
-		centreX = x
-	} else if remainderX == 2 {
-		// below centre
-		centreX = x - 1
-	} else {
-		// TODO should not happen
+func getSectionCentre(x int, y int) (*point, error) {
+	var sections = []struct {
+		minInclusive point
+		maxInclusive point
+		centre       point
+	}{
+		{point{0, 0}, point{2, 2}, point{1, 1}},
+		{point{0, 3}, point{2, 5}, point{1, 4}},
+		{point{0, 6}, point{2, 8}, point{1, 7}},
+
+		{point{3, 0}, point{5, 2}, point{4, 1}},
+		{point{3, 3}, point{5, 5}, point{4, 4}},
+		{point{3, 6}, point{5, 8}, point{4, 7}},
+
+		{point{6, 0}, point{8, 2}, point{7, 1}},
+		{point{6, 3}, point{8, 5}, point{7, 4}},
+		{point{6, 6}, point{8, 8}, point{7, 7}},
 	}
 
-	remainderY := y % sq.SectionSize
-	if remainderY == 0 {
-		// left of centre
-		centreY = y + 1
-	} else if remainderY == 1 {
-		// is centre
-		centreY = y
-	} else if remainderY == 2 {
-		// right of centre
-		centreY = y - 1
-	} else {
-		// TODO should not happen
+	for _, section := range sections {
+		if x >= section.minInclusive.x && x <= section.maxInclusive.x &&
+			y >= section.minInclusive.y && y <= section.maxInclusive.y {
+			return &section.centre, nil
+		}
 	}
-
-	return centreX, centreY
+	return nil, errors.New("No centre found")
 }
 
-func (sq Square) getNeighbourValues(x int, y int) ValueSet {
+func (sq Square) getNeighbourValues(sectionCentre *point) ValueSet {
 	values := NewValueSet()
 	for dx := -1; dx <= 1; dx++ {
 		for dy := -1; dy <= 1; dy++ {
-			if sq.Exists(x+dx, y+dy) && sq.Has(x+dx, y+dy) {
-				values.Add(sq.Get(x+dx, y+dy))
+			if sq.Exists(sectionCentre.x+dx, sectionCentre.y+dy) &&
+				sq.Has(sectionCentre.x+dx, sectionCentre.y+dy) {
+				values.Add(sq.Get(sectionCentre.x+dx, sectionCentre.y+dy))
 			}
 		}
 	}

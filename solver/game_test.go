@@ -204,6 +204,23 @@ _ 9 _ _ _ _ 4 _ _
 		if len(solutions) != 1 {
 			t.Errorf("expected: %d, actual: %d", 1, len(solutions))
 		}
-		t.Logf("Game: %v\n", solutions[0])
+	}
+}
+
+func BenchmarkHardestSolution(b *testing.B) {
+	gameData := `8 _ _ _ _ _ _ _ _
+_ _ 3 6 _ _ _ _ _
+_ 7 _ _ 9 _ 2 _ _
+_ 5 _ _ _ 7 _ _ _
+_ _ _ _ 4 5 7 _ _
+_ _ _ 1 _ _ _ 3 _
+_ _ 1 _ _ _ _ 6 8
+_ _ 8 5 _ _ _ 1 _
+_ 9 _ _ _ _ 4 _ _
+`
+
+	for n := 0; n < b.N; n++ {
+		game, _ := LoadString(gameData)
+		Solve(game, 3, 1)
 	}
 }
