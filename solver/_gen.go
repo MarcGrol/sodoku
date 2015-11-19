@@ -1,4 +1,4 @@
-package main
+package solver
 
 import (
 	_ "github.com/clipperhouse/slice"

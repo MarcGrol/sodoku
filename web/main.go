@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/MarcGrol/sodoku/core"
+	"github.com/MarcGrol/sodoku/solver"
 	"github.com/justinas/alice"
 )
 
@@ -37,7 +37,7 @@ func (eh *sodokuHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 }
 
 func (eh *sodokuHandler) get(w http.ResponseWriter, r *http.Request) {
-	game, err := core.Load(HARD_EXAMPLE)
+	game, err := solver.Load(HARD_EXAMPLE)
 	if err != nil {
 		writeError(w, http.StatusBadRequest, err)
 	}
@@ -52,7 +52,7 @@ func (eh *sodokuHandler) post(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// load
-	game, err := core.LoadSteps(toCoreSteps(input.Steps))
+	game, err := solver.LoadSteps(toCoreSteps(input.Steps))
 	if err != nil {
 		writeError(w, http.StatusBadRequest, err)
 	}
@@ -61,8 +61,8 @@ func (eh *sodokuHandler) post(w http.ResponseWriter, r *http.Request) {
 	doSolve(w, r, game)
 }
 
-func doSolve(w http.ResponseWriter, r *http.Request, game *core.Game) {
-	coreSolutions, err := core.Solve(game, TIMEOUT, MAX_SOLUTIONS)
+func doSolve(w http.ResponseWriter, r *http.Request, game *solver.Game) {
+	coreSolutions, err := solver.Solve(game, TIMEOUT, MAX_SOLUTIONS)
 	if err != nil {
 		writeError(w, http.StatusInternalServerError, err)
 	}
@@ -75,15 +75,15 @@ func doSolve(w http.ResponseWriter, r *http.Request, game *core.Game) {
 	writeSuccess(w, resp)
 }
 
-func toCoreSteps(webSteps []Step) []core.Step {
-	steps := make([]core.Step, 0, 100)
+func toCoreSteps(webSteps []Step) []solver.Step {
+	steps := make([]solver.Step, 0, 100)
 	for _, step := range webSteps {
-		steps = append(steps, core.Step{X: step.X, Y: step.Y, Z: core.Value(step.Z), Initial: step.Initial, IsGuess: step.IsGuess})
+		steps = append(steps, solver.Step{X: step.X, Y: step.Y, Z: solver.Value(step.Z), Initial: step.Initial, IsGuess: step.IsGuess})
 	}
 	return steps
 }
 
-func fromCoreSteps(coreSteps []core.Step) []Step {
+func fromCoreSteps(coreSteps []solver.Step) []Step {
 	steps := make([]Step, 0, 100)
 	for _, step := range coreSteps {
 		steps = append(steps, Step{X: step.X, Y: step.Y, Z: int(step.Z), Initial: step.Initial, IsGuess: step.IsGuess})
@@ -107,7 +107,7 @@ func writeSuccess(w http.ResponseWriter, resp Response) {
 }
 
 func main() {
-	core.Verbose = true
+	solver.Verbose = true
 	h := &sodokuHandler{}
 	// configure middleware around our example
 	chain := alice.New(loggingHandler, countingHandler).Then(h)

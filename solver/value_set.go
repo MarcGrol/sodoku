@@ -2,7 +2,7 @@
 // TypeWriter: set
 // Directive: +gen on Value
 
-package core
+package solver
 
 // Set is a modification of https://github.com/deckarep/golang-set
 // The MIT License (MIT)
