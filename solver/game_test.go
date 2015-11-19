@@ -208,7 +208,7 @@ _ 9 _ _ _ _ 4 _ _
 	}
 }
 
-func TestSolveImpossibleSolution(t *testing.T) {
+func TestSolveMultipleSolution(t *testing.T) {
 	gameData := `1 _ 3 _ _ 6 _ 8 _
 _ 5 _ _ 8 _ 1 2 _
 7 _ 9 1 _ 3 _ 5 6
