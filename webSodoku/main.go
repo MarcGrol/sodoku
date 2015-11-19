@@ -11,8 +11,6 @@ import (
 	"github.com/justinas/alice"
 )
 
-const TIMEOUT = 2
-const MAX_SOLUTIONS = 1
 const HARD_EXAMPLE = `9 _ _ _ 2 _ _ _ 5
 _ _ _ 9 _ 5 _ _ _
 _ _ 7 _ 6 _ 4 _ _
@@ -71,7 +69,7 @@ func (eh *sodokuHandler) post(w http.ResponseWriter, r *http.Request) {
 }
 
 func doSolve(w http.ResponseWriter, r *http.Request, game *solver.Game) {
-	coreSolutions, err := solver.Solve(game, TIMEOUT, MAX_SOLUTIONS)
+	coreSolutions, err := solver.Solve(game, *_Timeout, *_MinSolutions)
 	if err != nil {
 		writeError(w, http.StatusInternalServerError, err)
 	}
@@ -142,7 +140,7 @@ func printUsage() {
 func processArgs() {
 	help := flag.Bool("help", false, "Usage information")
 	_Verbose = flag.Bool("verbose", false, "Verbose logging to stderr")
-	_Timeout = flag.Int("timeout", 10, "Timeout in secs before give up")
+	_Timeout = flag.Int("timeout", 2, "Timeout in secs before give up")
 	_MinSolutions = flag.Int("solutions", 1, "Nummber of solutions to wait for before give up")
 	_Port = flag.Int("port", 3000, "Port web-server is listening at")
 
