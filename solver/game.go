@@ -181,30 +181,32 @@ func solve(g *Game) {
 
 		// This is a way to cleanly terminate running goroutines when game completed (due to timer or completion)
 		if time.Now().After(g.deadline) {
-			warning("%p: Abort because deadline expired\n", g)
+			debug("%p: Abort because deadline expired\n", g)
 			return
 		}
 
+		// check if cells can be easily solved
 		cellsSolvedInStep := g.step()
-
 		if cellsSolvedInStep < 0 {
 			// wrong guess upstream, terminate go-routine
 			return
-		}
 
-		if cellsSolvedInStep == 0 {
+		} else if cellsSolvedInStep == 0 {
 			// stuck using deterministic approach: start guessing
 			guessAndContinue(g)
 			return
-		}
 
-		debug("%p: Solved %d cells this loop\n", g, cellsSolvedInStep)
+		} else {
+			// this step resulted in cells-solved
 
-		if g.countEmptyValues() == 0 {
-			debug("%p: Got solution\n", g)
-			// we are done: report result back over solution-channel
-			g.solutionChannel <- g
-			return
+			debug("%p: Solved %d cells this loop\n", g, cellsSolvedInStep)
+
+			if g.countEmptyValues() == 0 {
+				// we are done: report result back over solution-channel
+				debug("%p: Got solution\n", g)
+				g.solutionChannel <- g
+				return
+			}
 		}
 	}
 
@@ -218,7 +220,7 @@ func (g *Game) step() int {
 	for x := 0; x < g.square.Size; x++ {
 		for y := 0; y < g.square.Size; y++ {
 			if !g.square.Has(x, y) {
-				mergedCandidates := g.findCandidates(x, y)
+				mergedCandidates := g.findCellCandidates(x, y)
 				if len(mergedCandidates) == 0 {
 					// we have mad a wrong guess somwhere
 					debug("%p: Cell %d-%d has zero candidates due to wrong guess upstream\n", g, x+1, y+1)
@@ -264,7 +266,7 @@ func (g *Game) findCellsWithLeastCandidates() []cell {
 	cells := make([]cell, 0, SQUARE_SIZE*SQUARE_SIZE)
 	g.square.Iterate(func(x int, y int, z Value) error {
 		if !g.square.Has(x, y) {
-			cellCandidates := g.findCandidates(x, y)
+			cellCandidates := g.findCellCandidates(x, y)
 			if len(cellCandidates) > 1 {
 				cells = append(cells, cell{x: x, y: y, candidates: cellCandidates})
 			}
@@ -277,26 +279,22 @@ func (g *Game) findCellsWithLeastCandidates() []cell {
 	return cells
 }
 
-func (g *Game) findCandidates(x int, y int) []Value {
+func (g *Game) findCellCandidates(x int, y int) []Value {
 	mergedValues := mergeValues(
 		g.square.GetRowValues(x),
 		g.square.GetColumnValues(y),
 		g.square.GetSectionValues(x, y))
-	return findCandidates(mergedValues)
+	return findMissing(mergedValues)
 }
 
 func mergeValues(rowValues ValueSet, columnValues ValueSet, sectionValues ValueSet) ValueSet {
-	vs := rowValues.Union(columnValues)
-	return vs.Union(sectionValues)
+	merged := rowValues.Union(columnValues)
+	return merged.Union(sectionValues)
 }
 
-func findCandidates(existing ValueSet) []Value {
-	full := makeFull(SQUARE_SIZE)
+func findMissing(existing ValueSet) []Value {
+	full := NewValueSet(1, 2, 3, 4, 5, 6, 7, 8, 9)
 	return full.Difference(existing).ToSlice()
-}
-
-func makeFull(size int) ValueSet {
-	return NewValueSet(1, 2, 3, 4, 5, 6, 7, 8, 9)
 }
 
 type cell struct {
@@ -345,7 +343,7 @@ func (g *Game) DumpGameState() {
 			if g.square.Has(x, y) {
 				fmt.Fprintf(os.Stderr, "%-12d", g.square.Get(x, y))
 			} else {
-				mergedCandidates := g.findCandidates(x, y)
+				mergedCandidates := g.findCellCandidates(x, y)
 				alternatives := fmt.Sprintf("%v", mergedCandidates)
 				fmt.Fprintf(os.Stderr, "%-12s", alternatives)
 

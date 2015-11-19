@@ -209,26 +209,26 @@ _ 9 _ _ _ _ 4 _ _
 }
 
 func TestSolveImpossibleSolution(t *testing.T) {
-	gameData := `_ _ _ _ _ _ _ _ _
-_ _ _ _ _ _ _ _ _
-_ _ _ _ _ _ _ _ _
-_ _ _ _ _ _ _ _ _
-_ _ _ _ _ _ _ _ _
-_ _ _ _ _ _ _ _ _
-_ _ _ _ _ _ _ _ _
-_ _ _ _ _ _ _ _ _
-_ _ _ _ _ _ _ _ _
+	gameData := `1 _ 3 _ _ 6 _ 8 _
+_ 5 _ _ 8 _ 1 2 _
+7 _ 9 1 _ 3 _ 5 6
+_ 3 _ _ 6 7 _ 9 _
+5 _ 7 8 _ _ _ 3 _
+8 _ 1 _ 3 _ 5 _ 7
+_ 4 _ _ 7 8 _ 1 _
+6 _ 8 _ _ 2 _ 4 _
+_ 1 2 _ 4 5 _ 7 8
 `
 	game, err := LoadString(gameData)
 	if err != nil {
 		t.Errorf("Error loading game: %s", err)
 	}
-	solutions, err := Solve(game, 3, 1)
+	solutions, err := Solve(game, 3, 4)
 	if err != nil {
 		t.Errorf("Error solving game: %s", err)
 	} else {
-		if len(solutions) != 0 {
-			t.Errorf("expected: %d, actual: %d", 0, len(solutions))
+		if len(solutions) != 4 {
+			t.Errorf("expected: %d, actual: %d", 4, len(solutions))
 		}
 	}
 }
