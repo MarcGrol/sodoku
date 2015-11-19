@@ -7,29 +7,27 @@ import (
 
 type Response struct {
 	Error     *ErrorDescriptor `json:"error"`
-	Solutions []Solution       `json:"solutions"`
+	Solutions []Game           `json:"solutions"`
 }
 
 type ErrorDescriptor struct {
 	Message string `json:"message"`
 }
 
-type Exercise struct {
-	Steps []Step `json:"steps"`
-}
-
-type Solution struct {
+type Game struct {
 	Steps []Step `json:"steps"`
 }
 
 type Step struct {
-	X int `json:"x"`
-	Y int `json:"y"`
-	Z int `json:"z"`
+	X       int  `json:"x"`
+	Y       int  `json:"y"`
+	Z       int  `json:"z"`
+	Initial bool `json:"initial"`
+	IsGuess bool `json:"isGuess"`
 }
 
-func FromJson(reader io.Reader) (*Exercise, error) {
-	exerc := Exercise{}
+func FromJson(reader io.Reader) (*Game, error) {
+	exerc := Game{}
 	err := json.NewDecoder(reader).Decode(&exerc)
 	if err != nil {
 		return nil, err

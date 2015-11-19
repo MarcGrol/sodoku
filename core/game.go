@@ -27,9 +27,11 @@ type Game struct {
 }
 
 type Step struct {
-	X int
-	Y int
-	Z Value
+	X       int
+	Y       int
+	Z       Value
+	Initial bool
+	IsGuess bool
 }
 
 func newGame() *Game {
@@ -62,6 +64,7 @@ func LoadSteps(steps []Step) (*Game, error) {
 				step.Z, step.X, step.Y, idx)
 		}
 		game.square.Set(step.X, step.Y, Value(step.Z))
+		game.Steps = append(game.Steps, Step{X: step.X, Y: step.Y, Z: Value(step.Z), Initial: true, IsGuess: false})
 	}
 	game.CellsToBeSolved = game.countEmptyValues()
 	return game, nil
@@ -101,6 +104,7 @@ func Load(lines string) (*Game, error) {
 				return nil, fmt.Errorf("Duplicate value %d for item row:%d, column:%d", num, x+1, y+1)
 			}
 			game.square.Set(x, y, Value(num))
+			game.Steps = append(game.Steps, Step{X: x, Y: y, Z: Value(num), Initial: true, IsGuess: false})
 		}
 		linesRead++
 	}
@@ -240,7 +244,7 @@ func (g *Game) step() int {
 					return -1
 				} else if len(mergedCandidates) == 1 {
 					g.square.Set(x, y, mergedCandidates[0])
-					g.Steps = append(g.Steps, Step{X: x, Y: y, Z: mergedCandidates[0]})
+					g.Steps = append(g.Steps, Step{X: x, Y: y, Z: mergedCandidates[0], Initial: false, IsGuess: false})
 					cellsSolved++
 				}
 			}
@@ -261,7 +265,8 @@ func guessAndContinue(g *Game) {
 				fmt.Fprintf(os.Stderr, "%p: Got stuck -> Try %d-%d with value %d and continue\n", cpy, bestGuess.x+1, bestGuess.y+1, cand)
 			}
 			cpy.square.Set(bestGuess.x, bestGuess.y, cand)
-			g.GuessCount++
+			cpy.Steps = append(g.Steps, Step{X: bestGuess.x, Y: bestGuess.y, Z: cand, Initial: false, IsGuess: true})
+			cpy.GuessCount++
 			go solve(cpy)
 		}
 	}

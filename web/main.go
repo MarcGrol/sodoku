@@ -3,6 +3,7 @@ package main
 import (
 	"errors"
 	"fmt"
+	"log"
 	"net/http"
 
 	"github.com/MarcGrol/sodoku/core"
@@ -65,7 +66,8 @@ func doSolve(w http.ResponseWriter, r *http.Request, game *core.Game) {
 
 	resp := Response{Error: nil}
 	for _, coreSolution := range coreSolutions {
-		solution := Solution{Steps: fromCoreSteps(coreSolution.Steps)}
+		log.Printf("steps:%v", len(coreSolution.Steps))
+		solution := Game{Steps: fromCoreSteps(coreSolution.Steps)}
 		resp.Solutions = append(resp.Solutions, solution)
 	}
 	writeSuccess(w, resp)
@@ -74,7 +76,7 @@ func doSolve(w http.ResponseWriter, r *http.Request, game *core.Game) {
 func toCoreSteps(webSteps []Step) []core.Step {
 	steps := make([]core.Step, 0, 100)
 	for _, step := range webSteps {
-		steps = append(steps, core.Step{X: step.X, Y: step.Y, Z: core.Value(step.Z)})
+		steps = append(steps, core.Step{X: step.X, Y: step.Y, Z: core.Value(step.Z), Initial: step.Initial, IsGuess: step.IsGuess})
 	}
 	return steps
 }
@@ -82,7 +84,7 @@ func toCoreSteps(webSteps []Step) []core.Step {
 func fromCoreSteps(coreSteps []core.Step) []Step {
 	steps := make([]Step, 0, 100)
 	for _, step := range coreSteps {
-		steps = append(steps, Step{X: step.X, Y: step.Y, Z: int(step.Z)})
+		steps = append(steps, Step{X: step.X, Y: step.Y, Z: int(step.Z), Initial: step.Initial, IsGuess: step.IsGuess})
 	}
 	return steps
 }
@@ -103,6 +105,7 @@ func writeSuccess(w http.ResponseWriter, resp Response) {
 }
 
 func main() {
+	core.Verbose = true
 	h := &sodokuHandler{}
 	// configure middleware around our example
 	chain := alice.New(loggingHandler, countingHandler).Then(h)
