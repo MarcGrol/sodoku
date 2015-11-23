@@ -1,7 +1,9 @@
 package main
 
 import (
+	"encoding/json"
 	"errors"
+	"io"
 	"net/http"
 
 	"github.com/MarcGrol/sodoku/solver"
@@ -18,29 +20,70 @@ _ _ _ 8 _ 3 _ _ _
 4 _ _ _ 9 _ _ _ 3
 `
 
-type sodokuHandler struct {
+type Response struct {
+	Error     *ErrorDescriptor `json:"error"`
+	Solutions []Game           `json:"solutions"`
 }
 
-func (eh *sodokuHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+type ErrorDescriptor struct {
+	Message string `json:"message"`
+}
+
+type Game struct {
+	Board Board  `json:"board"`
+	Steps []Step `json:"steps"`
+}
+
+type Board struct {
+	Rows [solver.SQUARE_SIZE][solver.SQUARE_SIZE]int `json:"rows"`
+}
+
+type Step struct {
+	X       int  `json:"x"`
+	Y       int  `json:"y"`
+	Z       int  `json:"z"`
+	Initial bool `json:"initial"`
+	IsGuess bool `json:"isGuess"`
+}
+
+func FromJson(reader io.Reader) (*Game, error) {
+	game := Game{}
+	err := json.NewDecoder(reader).Decode(&game)
+	if err != nil {
+		return nil, err
+	}
+	return &game, nil
+}
+
+func (resp Response) ToJson(writer io.Writer) error {
+	return json.NewEncoder(writer).Encode(resp)
+}
+
+type sodokuHandler struct {
+	timeout      int
+	minSolutions int
+}
+
+func (sh *sodokuHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
 	case "GET":
-		eh.get(w, r)
+		sh.get(w, r)
 	case "POST":
-		eh.post(w, r)
+		sh.post(w, r)
 	default:
 		writeError(w, http.StatusMethodNotAllowed, errors.New("Only GET and POST are supported"))
 	}
 }
 
-func (eh *sodokuHandler) get(w http.ResponseWriter, r *http.Request) {
+func (sh sodokuHandler) get(w http.ResponseWriter, r *http.Request) {
 	game, err := solver.LoadString(HARD_EXAMPLE)
 	if err != nil {
 		writeError(w, http.StatusBadRequest, err)
 	}
-	doSolve(w, r, game)
+	sh.doSolve(w, r, game)
 }
 
-func (eh *sodokuHandler) post(w http.ResponseWriter, r *http.Request) {
+func (sh sodokuHandler) post(w http.ResponseWriter, r *http.Request) {
 	// read incoming steps
 	input, err := FromJson(r.Body)
 	if err != nil {
@@ -54,11 +97,11 @@ func (eh *sodokuHandler) post(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// solve and return response
-	doSolve(w, r, game)
+	sh.doSolve(w, r, game)
 }
 
-func doSolve(w http.ResponseWriter, r *http.Request, game *solver.Game) {
-	coreSolutions, err := solver.Solve(game, *_Timeout, *_MinSolutions)
+func (sh sodokuHandler) doSolve(w http.ResponseWriter, r *http.Request, game *solver.Game) {
+	coreSolutions, err := solver.Solve(game, sh.timeout, sh.minSolutions)
 	if err != nil {
 		writeError(w, http.StatusInternalServerError, err)
 	}

@@ -22,7 +22,7 @@ func main() {
 
 	solver.Verbose = *_Verbose
 
-	h := &sodokuHandler{}
+	h := &sodokuHandler{timeout: *_Timeout, minSolutions: *_MinSolutions}
 	// configure middleware around our example
 	chain := alice.New(loggingHandler, countingHandler).Then(h)
 
