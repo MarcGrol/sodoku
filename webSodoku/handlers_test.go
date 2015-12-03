@@ -9,7 +9,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestServer(t *testing.T) {
+func TestHttpGet(t *testing.T) {
 	recorder := httptest.NewRecorder()
 
 	req, _ := http.NewRequest("GET", "", nil)

@@ -107,7 +107,7 @@ type point struct {
 
 func (sq Square) GetSectionValues(x int, y int) ValueSet {
 	centre, _ := getSectionCentre(x, y)
-	return sq.getNeighbourValues(centre)
+	return sq.getPointWithNeighbourValues(centre)
 }
 
 func getSectionCentre(x int, y int) (*point, error) {
@@ -138,7 +138,7 @@ func getSectionCentre(x int, y int) (*point, error) {
 	return nil, errors.New("No centre found")
 }
 
-func (sq Square) getNeighbourValues(sectionCentre *point) ValueSet {
+func (sq Square) getPointWithNeighbourValues(sectionCentre *point) ValueSet {
 	values := NewValueSet()
 	for dx := -1; dx <= 1; dx++ {
 		for dy := -1; dy <= 1; dy++ {
