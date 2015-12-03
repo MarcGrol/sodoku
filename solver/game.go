@@ -3,12 +3,17 @@ package solver
 import (
 	"fmt"
 	"os"
+	"sync"
 	"time"
 )
 
 const (
 	SQUARE_SIZE  = 9
 	SECTION_SIZE = 3
+)
+
+var (
+	mutex sync.Mutex
 )
 
 type Game struct {
@@ -79,6 +84,8 @@ func (g Game) String() string {
 }
 
 func (g *Game) DumpGameState() {
+	mutex.Lock()
+	defer mutex.Unlock()
 
 	for x := 0; x < g.square.Size; x++ {
 		if (x % 3) == 0 {

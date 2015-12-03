@@ -8,7 +8,7 @@ import (
 func solveInBackground(g *Game) {
 	err := pool.Execute(wrappedSolve, g, g.timeoutSecs)
 	if err != nil {
-		warning("solve error:%s", err)
+		info("Execute error:%s", err)
 	}
 }
 
@@ -35,6 +35,8 @@ func solve(g *Game) {
 			return
 
 		} else if cellsSolvedInStep == 0 {
+			//g.DumpGameState()
+
 			// stuck using deterministic approach: start guessing
 			guessAndContinue(g)
 			return
@@ -115,10 +117,28 @@ func findCellsWithLeastCandidates(g *Game) []cell {
 }
 
 func findCellCandidates(g *Game, x int, y int) []Value {
-	mergedValues := mergeValues(
-		g.square.GetRowValues(x),
-		g.square.GetColumnValues(y),
-		g.square.GetSectionValues(x, y))
+	row := g.square.GetRowValues(x)
+	col := g.square.GetColumnValues(y)
+	sect := g.square.GetSectionValues(x, y)
+
+	if row.Cardinality() == 2 && col.Cardinality() == 2 {
+		if row.Equal(col) {
+			sect = sect.Difference(row)
+		}
+	}
+	if row.Cardinality() == 2 && sect.Cardinality() == 2 {
+		if row.Equal(sect) {
+			col = col.Difference(row)
+		}
+	}
+	if col.Cardinality() == 2 && sect.Cardinality() == 2 {
+		if col.Equal(sect) {
+			row = row.Difference(col)
+		}
+	}
+
+	mergedValues := mergeValues(row, col, sect)
+
 	return findMissing(mergedValues)
 }
 
