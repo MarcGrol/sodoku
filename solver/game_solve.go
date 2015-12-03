@@ -5,6 +5,13 @@ import (
 	"time"
 )
 
+func solveInBackground(g *Game) {
+	err := pool.Execute(wrappedSolve, g, g.timeoutSecs)
+	if err != nil {
+		warning("solve error:%s", err)
+	}
+}
+
 func wrappedSolve(data interface{}) {
 	solve(data.(*Game))
 }
@@ -12,7 +19,7 @@ func wrappedSolve(data interface{}) {
 func solve(g *Game) {
 	maxSteps := SQUARE_SIZE * SQUARE_SIZE
 
-	debug("%p: Start solving\n", g)
+	info("%p: Start solving\n", g)
 	for i := 0; i < maxSteps; i++ {
 
 		// This is a way to cleanly terminate running goroutines when game completed (due to timer or completion)
@@ -35,11 +42,11 @@ func solve(g *Game) {
 		} else {
 			// this step resulted in cells-solved
 
-			debug("%p: Solved %d cells this loop\n", g, cellsSolvedInStep)
+			info("%p: Solved %d cells this loop\n", g, cellsSolvedInStep)
 
 			if g.countEmptyValues() == 0 {
 				// we are done: report result back over solution-channel
-				debug("%p: Got solution\n", g)
+				info("%p: Got solution\n", g)
 				g.solutionChannel <- g
 				return
 			}
@@ -59,7 +66,7 @@ func step(g *Game) int {
 				mergedCandidates := findCellCandidates(g, x, y)
 				if len(mergedCandidates) == 0 {
 					// we have mad a wrong guess somwhere
-					debug("%p: Cell %d-%d has zero candidates due to wrong guess upstream\n", g, x+1, y+1)
+					info("%p: Cell %d-%d has zero candidates due to wrong guess upstream\n", g, x+1, y+1)
 					return -1
 				} else if len(mergedCandidates) == 1 {
 					g.set(x, y, mergedCandidates[0], false, false)
@@ -79,7 +86,7 @@ func guessAndContinue(g *Game) {
 		bestGuess := orderedBestGuesses[0]
 		for _, cand := range bestGuess.candidates {
 			cpy := g.copy()
-			debug("%p -> %p: Got stuck -> Try %d-%d with value %d and continue\n",
+			info("%p -> %p: Got stuck -> Try %d-%d with value %d and continue\n",
 				g, cpy, bestGuess.x+1, bestGuess.y+1, cand)
 			cpy.set(bestGuess.x, bestGuess.y, cand, false, true)
 			solveInBackground(cpy)

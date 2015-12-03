@@ -8,29 +8,28 @@ import (
 )
 
 const (
-	WORKER_POOL_SIZE = 100
+	WORKER_POOL_SIZE = 500
 )
 
 var (
-	pool *workerpool.WorkerPool
+	pool *workerpool.WorkerPool = nil
 )
 
-func solveInBackground(g *Game) {
-	pool.Execute(wrappedSolve, g, g.timeoutSec)
-}
-
-func Solve(g *Game, timeout int, minSolutionCount int) ([]*Game, error) {
+func init() {
 	pool = workerpool.NewWorkerPool(WORKER_POOL_SIZE)
 	pool.Start()
+}
+
+func Solve(g *Game, timeoutSecs int, minSolutionCount int) ([]*Game, error) {
 
 	// non-blocking channel to prevent go-routines to block each other on reporting solution
 	solutionChannel := make(chan *Game, 1000)
-	duration := time.Duration(timeout) * time.Second
 
 	// Store completion variables within game
 	g.solutionChannel = solutionChannel
+	duration := time.Duration(timeoutSecs) * time.Second
 	g.deadline = time.Now().Add(duration)
-	g.timeoutSec = duration
+	g.timeoutSecs = timeoutSecs
 
 	// Start solving in background
 	// Solutions will be reported back over solutionChannel
@@ -41,6 +40,7 @@ func Solve(g *Game, timeout int, minSolutionCount int) ([]*Game, error) {
 }
 
 func waitforCompletion(solutionChannel chan *Game, duration time.Duration, minSolutionCount int) ([]*Game, error) {
+
 	timer := time.After(duration)
 
 	solutions := make([]*Game, 0, 10)
@@ -67,8 +67,6 @@ outerLoop:
 	if len(solutions) == 0 {
 		debug("No solutions found")
 	}
-
-	pool.Stop()
 
 	return solutions, nil
 }

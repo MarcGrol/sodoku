@@ -55,16 +55,16 @@ func TestTimeout(t *testing.T) {
 	// claim worker
 	go pool.Execute(
 		func(data interface{}) {
-			time.Sleep(2 * time.Second)
+			time.Sleep(time.Duration(2) * time.Second)
 		},
-		nil,
-		0)
+		"first",
+		1)
 
 	// be sure worker received this task
-	time.Sleep(1)
+	time.Sleep(time.Duration(100) * time.Millisecond)
 
 	// block on second task
-	err := doitOnce(pool, "44", 3, 1)
+	err := doitOnce(pool, "second", 3, 1)
 	if err == nil || err.Error() != "Timeout waiting for worker" {
 		t.Errorf("expected: %s, actual %v", "Timeout waiting for worker", err)
 	}
@@ -78,19 +78,19 @@ func TestBulk(t *testing.T) {
 	bulk(t, pool, 1000, 1)
 }
 
-func doitOnce(pool *WorkerPool, expected string, delay time.Duration, timeout time.Duration) error {
+func doitOnce(pool *WorkerPool, expected string, delay time.Duration, timeoutSecs int) error {
 	var wg sync.WaitGroup
 	wg.Add(1)
 
 	actual := ""
 	err := pool.Execute(
 		func(data interface{}) {
-			time.Sleep(delay * time.Second)
+			time.Sleep(time.Duration(timeoutSecs) * time.Second)
 			actual = data.(string)
 			wg.Done()
 		},
 		expected,
-		timeout)
+		timeoutSecs)
 	if err != nil {
 		return err
 	}
@@ -116,7 +116,7 @@ func (r *Result) add(msg string) {
 	r.messages = append(r.messages, msg)
 }
 
-func bulk(t *testing.T, pool *WorkerPool, msg_count int, timeout_sec time.Duration) {
+func bulk(t *testing.T, pool *WorkerPool, msg_count int, timeout_sec int) {
 
 	r := Result{}
 

@@ -92,7 +92,7 @@ _ 9 _ _ _ _ 4 _ _
 	if err != nil {
 		t.Errorf("Error loading game: %s", err)
 	}
-	solutions, err := Solve(game, 3, 1)
+	solutions, err := Solve(game, 1, 1)
 	if err != nil {
 		t.Errorf("Error solving game: %s", err)
 	} else {

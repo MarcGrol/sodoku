@@ -1,8 +1,8 @@
 package workerpool
 
 import (
-	"errors"
 	"fmt"
+	"log"
 	"sync"
 	"time"
 )
@@ -40,6 +40,7 @@ outerloop:
 	for {
 		select {
 		case <-w.quit:
+			log.Printf("Worker got termination signal")
 			break outerloop
 
 		case task := <-w.tasks:
@@ -57,6 +58,8 @@ outerloop:
 
 	// mark worker as stopped
 	pool.wg.Done()
+	log.Printf("Worker terminated")
+
 }
 
 func sendTaskToWorker(w *worker, t *task) {
@@ -125,18 +128,19 @@ func (pool *WorkerPool) Stop() {
 
 		// cleanup
 		pool.availableWorkers.close()
+
+		log.Printf("Pool terminated")
 	}
 }
 
-func (pool *WorkerPool) Execute(f WorkerFunc, data interface{}, timeoutMsec time.Duration) error {
-
+func (pool *WorkerPool) Execute(f WorkerFunc, data interface{}, timeoutSecs int) error {
 	// only accept work when pool is up
 	if pool.isUp() == false {
 		return fmt.Errorf("Pool is not running")
 	}
 
 	// Get a worker:  operation could block
-	worker, err := pool.availableWorkers.getHead(timeoutMsec)
+	worker, err := pool.availableWorkers.getHead(time.Duration(timeoutSecs) * time.Second)
 	if err != nil {
 		return err
 	}
@@ -177,12 +181,12 @@ func (q *workerQueue) addTail(worker *worker) {
 	q.pipe <- worker
 }
 
-func (q *workerQueue) getHead(timeoutSec time.Duration) (*worker, error) {
-	timeout := time.After(timeoutSec * time.Second)
+func (q *workerQueue) getHead(timeout time.Duration) (*worker, error) {
+	timer := time.After(timeout)
 	for {
 		select {
-		case <-timeout:
-			return nil, errors.New("Timeout waiting for worker")
+		case <-timer:
+			return nil, fmt.Errorf("Timeout waiting for worker")
 
 		case worker := <-q.pipe:
 			return worker, nil

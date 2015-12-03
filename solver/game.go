@@ -18,7 +18,7 @@ type Game struct {
 	square          *Square
 	solutionChannel chan *Game
 	deadline        time.Time
-	timeoutSec      time.Duration
+	timeoutSecs     int
 }
 
 type Step struct {
@@ -42,6 +42,8 @@ func (g Game) copy() *Game {
 	ng.GuessCount = g.GuessCount
 	ng.solutionChannel = g.solutionChannel
 	ng.deadline = g.deadline
+	toGo := ng.deadline.Second() - time.Now().Second()
+	ng.timeoutSecs = toGo
 	for _, s := range g.Steps {
 		ng.Steps = append(ng.Steps, Step{X: s.X, Y: s.Y, Z: s.Z})
 	}
