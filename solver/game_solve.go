@@ -5,6 +5,10 @@ import (
 	"time"
 )
 
+func wrappedSolve(data interface{}) {
+	solve(data.(*Game))
+}
+
 func solve(g *Game) {
 	maxSteps := SQUARE_SIZE * SQUARE_SIZE
 
@@ -78,7 +82,7 @@ func guessAndContinue(g *Game) {
 			debug("%p -> %p: Got stuck -> Try %d-%d with value %d and continue\n",
 				g, cpy, bestGuess.x+1, bestGuess.y+1, cand)
 			cpy.set(bestGuess.x, bestGuess.y, cand, false, true)
-			go solve(cpy)
+			solveInBackground(cpy)
 		}
 	} else {
 		// unsolveable

@@ -18,6 +18,7 @@ type Game struct {
 	square          *Square
 	solutionChannel chan *Game
 	deadline        time.Time
+	timeoutSec      time.Duration
 }
 
 type Step struct {

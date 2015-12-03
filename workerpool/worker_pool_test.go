@@ -8,7 +8,7 @@ import (
 )
 
 const (
-	TIMEOUT_MSEC = 1000
+	TIMEOUT_MSEC = 1
 )
 
 func TestUnstartedPool(t *testing.T) {
@@ -75,7 +75,7 @@ func TestBulk(t *testing.T) {
 	pool.Start()
 	defer pool.Stop()
 
-	bulk(t, pool, 1000, 1000)
+	bulk(t, pool, 1000, 1)
 }
 
 func doitOnce(pool *WorkerPool, expected string, delay time.Duration, timeout time.Duration) error {
@@ -116,7 +116,7 @@ func (r *Result) add(msg string) {
 	r.messages = append(r.messages, msg)
 }
 
-func bulk(t *testing.T, pool *WorkerPool, msg_count int, timeout_msec time.Duration) {
+func bulk(t *testing.T, pool *WorkerPool, msg_count int, timeout_sec time.Duration) {
 
 	r := Result{}
 
@@ -129,7 +129,7 @@ func bulk(t *testing.T, pool *WorkerPool, msg_count int, timeout_msec time.Durat
 				r.Done()
 			},
 			payload,
-			timeout_msec)
+			timeout_sec)
 	}
 
 	r.Wait()

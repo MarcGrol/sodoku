@@ -3,9 +3,26 @@ package solver
 import (
 	"reflect"
 	"time"
+
+	"github.com/MarcGrol/sodoku/workerpool"
 )
 
+const (
+	WORKER_POOL_SIZE = 100
+)
+
+var (
+	pool *workerpool.WorkerPool
+)
+
+func solveInBackground(g *Game) {
+	pool.Execute(wrappedSolve, g, g.timeoutSec)
+}
+
 func Solve(g *Game, timeout int, minSolutionCount int) ([]*Game, error) {
+	pool = workerpool.NewWorkerPool(WORKER_POOL_SIZE)
+	pool.Start()
+
 	// non-blocking channel to prevent go-routines to block each other on reporting solution
 	solutionChannel := make(chan *Game, 1000)
 	duration := time.Duration(timeout) * time.Second
@@ -13,10 +30,11 @@ func Solve(g *Game, timeout int, minSolutionCount int) ([]*Game, error) {
 	// Store completion variables within game
 	g.solutionChannel = solutionChannel
 	g.deadline = time.Now().Add(duration)
+	g.timeoutSec = duration
 
 	// Start solving in background
 	// Solutions will be reported back over solutionChannel
-	go solve(g)
+	solveInBackground(g)
 
 	// Wait for a solution
 	return waitforCompletion(solutionChannel, duration, minSolutionCount)
@@ -49,6 +67,9 @@ outerLoop:
 	if len(solutions) == 0 {
 		debug("No solutions found")
 	}
+
+	pool.Stop()
+
 	return solutions, nil
 }
 

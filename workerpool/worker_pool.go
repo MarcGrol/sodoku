@@ -177,8 +177,8 @@ func (q *workerQueue) addTail(worker *worker) {
 	q.pipe <- worker
 }
 
-func (q *workerQueue) getHead(timeoutMsec time.Duration) (*worker, error) {
-	timeout := time.After(timeoutMsec * time.Millisecond)
+func (q *workerQueue) getHead(timeoutSec time.Duration) (*worker, error) {
+	timeout := time.After(timeoutSec * time.Second)
 	for {
 		select {
 		case <-timeout:
