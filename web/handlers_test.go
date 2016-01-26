@@ -1,4 +1,4 @@
-package main
+package web
 
 import (
 	"encoding/json"
@@ -16,7 +16,7 @@ func TestHttpGet(t *testing.T) {
 	req.RequestURI = "/sodoku"
 	req.Header.Set("Accept", "application/json")
 
-	sh := sodokuHandler{timeout: 1, minSolutions: 1}
+	sh := SodokuHandler{timeout: 1, minSolutions: 1}
 	sh.ServeHTTP(recorder, req)
 
 	//  verify response
@@ -24,7 +24,7 @@ func TestHttpGet(t *testing.T) {
 
 	// decode json
 	dec := json.NewDecoder(recorder.Body)
-	var resp Response
+	var resp response
 	err := dec.Decode(&resp)
 	if err != nil {
 		t.Errorf("Expected nil, actual: %v", err)

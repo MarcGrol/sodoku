@@ -1,3 +1,5 @@
+// +build !appengine
+
 package main
 
 import (
@@ -6,7 +8,10 @@ import (
 	"net/http"
 	"os"
 
+	"golang.org/x/net/context"
+
 	"github.com/MarcGrol/sodoku/solver"
+	"github.com/MarcGrol/sodoku/web"
 	"github.com/justinas/alice"
 )
 
@@ -22,7 +27,7 @@ func main() {
 
 	solver.Verbose = *_Verbose
 
-	h := &sodokuHandler{timeout: *_Timeout, minSolutions: *_MinSolutions}
+	h := &web.sodokuHandler{timeout: *_Timeout, minSolutions: *_MinSolutions, context: context.TODO()}
 	// configure middleware around our example
 	chain := alice.New(loggingHandler, countingHandler).Then(h)
 

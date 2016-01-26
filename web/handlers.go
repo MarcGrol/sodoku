@@ -1,4 +1,4 @@
-package main
+package web
 
 import (
 	"encoding/json"
@@ -6,10 +6,14 @@ import (
 	"io"
 	"net/http"
 
+	"github.com/MarcGrol/ctx"
+	"github.com/MarcGrol/logging"
 	"github.com/MarcGrol/sodoku/solver"
+
+	"golang.org/x/net/context"
 )
 
-const HARD_EXAMPLE = `9 _ _ _ 2 _ _ _ 5
+const hardExample = `9 _ _ _ 2 _ _ _ 5
 _ _ _ 9 _ 5 _ _ _
 _ _ 7 _ 6 _ 4 _ _
 _ 5 _ _ _ _ _ 7 _
@@ -20,25 +24,25 @@ _ _ _ 8 _ 3 _ _ _
 4 _ _ _ 9 _ _ _ 3
 `
 
-type Response struct {
-	Error     *ErrorDescriptor `json:"error"`
-	Solutions []Game           `json:"solutions"`
+type response struct {
+	Error     *errorDescriptor `json:"error"`
+	Solutions []game           `json:"solutions"`
 }
 
-type ErrorDescriptor struct {
+type errorDescriptor struct {
 	Message string `json:"message"`
 }
 
-type Game struct {
-	Board Board  `json:"board"`
-	Steps []Step `json:"steps"`
+type game struct {
+	Board board  `json:"board"`
+	Steps []step `json:"steps"`
 }
 
-type Board struct {
+type board struct {
 	Rows [solver.SQUARE_SIZE][solver.SQUARE_SIZE]int `json:"rows"`
 }
 
-type Step struct {
+type step struct {
 	X       int  `json:"x"`
 	Y       int  `json:"y"`
 	Z       int  `json:"z"`
@@ -46,25 +50,33 @@ type Step struct {
 	IsGuess bool `json:"isGuess"`
 }
 
-func FromJson(reader io.Reader) (*Game, error) {
-	game := Game{}
-	err := json.NewDecoder(reader).Decode(&game)
+func fromJSON(reader io.Reader) (*game, error) {
+	g := game{}
+	err := json.NewDecoder(reader).Decode(&g)
 	if err != nil {
 		return nil, err
 	}
-	return &game, nil
+	return &g, nil
 }
 
-func (resp Response) ToJson(writer io.Writer) error {
+func (resp response) toJSON(writer io.Writer) error {
 	return json.NewEncoder(writer).Encode(resp)
 }
 
-type sodokuHandler struct {
+// SodokuHandler exposes sodoku solver as HTTP endpoint
+type SodokuHandler struct {
 	timeout      int
 	minSolutions int
+	context      context.Context
 }
 
-func (sh *sodokuHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+func (sh *SodokuHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	// inject context in application
+	ctx := ctx.New.CreateContext(r)
+	log := logging.New()
+
+	log.Warning(ctx, "Got %s on url %s", r.Method, r.RequestURI)
+
 	switch r.Method {
 	case "GET":
 		sh.get(w, r)
@@ -75,17 +87,18 @@ func (sh *sodokuHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func (sh sodokuHandler) get(w http.ResponseWriter, r *http.Request) {
-	game, err := solver.LoadString(HARD_EXAMPLE)
+func (sh SodokuHandler) get(w http.ResponseWriter, r *http.Request) {
+
+	game, err := solver.LoadString(hardExample)
 	if err != nil {
 		writeError(w, http.StatusBadRequest, err)
 	}
 	sh.doSolve(w, r, game)
 }
 
-func (sh sodokuHandler) post(w http.ResponseWriter, r *http.Request) {
+func (sh SodokuHandler) post(w http.ResponseWriter, r *http.Request) {
 	// read incoming steps
-	input, err := FromJson(r.Body)
+	input, err := fromJSON(r.Body)
 	if err != nil {
 		writeError(w, http.StatusBadRequest, err)
 	}
@@ -100,17 +113,16 @@ func (sh sodokuHandler) post(w http.ResponseWriter, r *http.Request) {
 	sh.doSolve(w, r, game)
 }
 
-func (sh sodokuHandler) doSolve(w http.ResponseWriter, r *http.Request, game *solver.Game) {
-	coreSolutions, err := solver.Solve(game, sh.timeout, sh.minSolutions)
+func (sh SodokuHandler) doSolve(w http.ResponseWriter, r *http.Request, gameToSolve *solver.Game) {
+	coreSolutions, err := solver.Solve(gameToSolve, sh.timeout, sh.minSolutions)
 	if err != nil {
 		writeError(w, http.StatusInternalServerError, err)
 	}
 
-	resp := Response{Error: nil}
+	resp := response{Error: nil}
 	for _, coreSolution := range coreSolutions {
-		board := boardFromSteps(coreSolution.Steps)
-		solution := Game{
-			Board: board,
+		solution := game{
+			Board: boardFromSteps(coreSolution.Steps),
 			Steps: fromCoreSteps(coreSolution.Steps),
 		}
 		resp.Solutions = append(resp.Solutions, solution)
@@ -118,7 +130,7 @@ func (sh sodokuHandler) doSolve(w http.ResponseWriter, r *http.Request, game *so
 	writeSuccess(w, resp)
 }
 
-func toCoreSteps(webSteps []Step) []solver.Step {
+func toCoreSteps(webSteps []step) []solver.Step {
 	steps := make([]solver.Step, 0, 100)
 	for _, step := range webSteps {
 		steps = append(steps, solver.Step{X: step.X, Y: step.Y, Z: solver.Value(step.Z), Initial: step.Initial, IsGuess: step.IsGuess})
@@ -126,16 +138,18 @@ func toCoreSteps(webSteps []Step) []solver.Step {
 	return steps
 }
 
-func fromCoreSteps(coreSteps []solver.Step) []Step {
-	steps := make([]Step, 0, 100)
-	for _, step := range coreSteps {
-		steps = append(steps, Step{X: step.X, Y: step.Y, Z: int(step.Z), Initial: step.Initial, IsGuess: step.IsGuess})
+func fromCoreSteps(coreSteps []solver.Step) []step {
+	steps := make([]step, 0, 100)
+	for _, s := range coreSteps {
+		steps = append(steps,
+			step{X: s.X, Y: s.Y, Z: int(s.Z), Initial: s.Initial, IsGuess: s.IsGuess},
+		)
 	}
 	return steps
 }
 
-func boardFromSteps(coreSteps []solver.Step) Board {
-	board := Board{}
+func boardFromSteps(coreSteps []solver.Step) board {
+	board := board{}
 	for _, step := range coreSteps {
 		board.Rows[step.X][step.Y] = int(step.Z)
 	}
@@ -143,16 +157,16 @@ func boardFromSteps(coreSteps []solver.Step) Board {
 }
 
 func writeError(w http.ResponseWriter, status int, err error) {
-	resp := Response{Error: &ErrorDescriptor{Message: err.Error()}}
+	resp := response{Error: &errorDescriptor{Message: err.Error()}}
 	// write headers
 	w.WriteHeader(status)
 	w.Header().Set("Content-Type", "application/json")
-	resp.ToJson(w)
+	resp.toJSON(w)
 }
 
-func writeSuccess(w http.ResponseWriter, resp Response) {
+func writeSuccess(w http.ResponseWriter, resp response) {
 	// write headers
 	w.WriteHeader(http.StatusOK)
 	w.Header().Set("Content-Type", "application/json")
-	resp.ToJson(w)
+	resp.toJSON(w)
 }

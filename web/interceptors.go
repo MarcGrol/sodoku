@@ -1,6 +1,4 @@
-// +build !appengine
-
-package main
+package web
 
 import (
 	"expvar"
