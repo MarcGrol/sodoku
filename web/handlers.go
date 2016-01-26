@@ -9,8 +9,6 @@ import (
 	"github.com/MarcGrol/ctx"
 	"github.com/MarcGrol/logging"
 	"github.com/MarcGrol/sodoku/solver"
-
-	"golang.org/x/net/context"
 )
 
 const hardExample = `9 _ _ _ 2 _ _ _ 5
@@ -65,9 +63,8 @@ func (resp response) toJSON(writer io.Writer) error {
 
 // SodokuHandler exposes sodoku solver as HTTP endpoint
 type SodokuHandler struct {
-	timeout      int
-	minSolutions int
-	context      context.Context
+	Timeout      int
+	MinSolutions int
 }
 
 func (sh *SodokuHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
@@ -75,7 +72,7 @@ func (sh *SodokuHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	ctx := ctx.New.CreateContext(r)
 	log := logging.New()
 
-	log.Warning(ctx, "Got %s on url %s", r.Method, r.RequestURI)
+	log.Info(ctx, "Got %s on url %s", r.Method, r.RequestURI)
 
 	switch r.Method {
 	case "GET":
@@ -114,7 +111,7 @@ func (sh SodokuHandler) post(w http.ResponseWriter, r *http.Request) {
 }
 
 func (sh SodokuHandler) doSolve(w http.ResponseWriter, r *http.Request, gameToSolve *solver.Game) {
-	coreSolutions, err := solver.Solve(gameToSolve, sh.timeout, sh.minSolutions)
+	coreSolutions, err := solver.Solve(gameToSolve, sh.Timeout, sh.MinSolutions)
 	if err != nil {
 		writeError(w, http.StatusInternalServerError, err)
 	}

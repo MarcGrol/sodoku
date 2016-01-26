@@ -17,12 +17,14 @@ func logger(next http.Handler) http.Handler {
 		t2 := time.Now()
 		log.Printf("[%s] %q %v\n", r.Method, r.URL.String(), t2.Sub(t1))
 	}
-
 	return http.HandlerFunc(fn)
 }
 
 func init() {
-	h := &SodokuHandler{timeout: 10, minSolutions: 1}
+	h := &SodokuHandler{
+		Timeout:      10,
+		MinSolutions: 1,
+	}
 	chain := alice.New(logger).Then(h)
 
 	http.Handle("/sodoku", chain)

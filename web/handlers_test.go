@@ -16,7 +16,10 @@ func TestHttpGet(t *testing.T) {
 	req.RequestURI = "/sodoku"
 	req.Header.Set("Accept", "application/json")
 
-	sh := SodokuHandler{timeout: 1, minSolutions: 1}
+	sh := SodokuHandler{
+		Timeout:      1,
+		MinSolutions: 1,
+	}
 	sh.ServeHTTP(recorder, req)
 
 	//  verify response

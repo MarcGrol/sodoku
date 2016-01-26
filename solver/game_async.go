@@ -4,7 +4,7 @@ import (
 	"reflect"
 	"time"
 
-	"github.com/MarcGrol/sodoku/workerpool"
+	"github.com/MarcGrol/workerpool"
 )
 
 const (
