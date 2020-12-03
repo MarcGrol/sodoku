@@ -1,5 +1,5 @@
-# sodoku
-Sodoku solver in go. Combines deterministic and brute force approach using recursion, go-routines and channels.
+# Sudoku
+Sudoku solver in go. Combines deterministic and brute force approach using recursion, go-routines and channels.
 Educated guesses are run in dedicated go-routines: A bad guess will make the goroutine terminate. A good guess leading to a solution will be reported back to main thread.
 
 ## Testing
